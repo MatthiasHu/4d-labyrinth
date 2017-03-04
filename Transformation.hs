@@ -8,6 +8,7 @@ module Transformation
   , rotate
   , translation
   , rotation
+  , invert
   ) where
 
 import Linear hiding (transform, rotate, translation)
@@ -35,8 +36,9 @@ instance Transformable V3 where
   transform (Transformation rot trans) v = rot !* v + trans
 
 -- Only apply the rotation part to a vector.
--- This is appropriate when the vector does not represent a point in space
--- but rather a direction (with length), like normal vectors.
+-- This is appropriate when the vector does not represent
+-- a point in space, but rather a direction (with length),
+-- like normal vectors do.
 rotate :: (Num a) => Transformation a -> V3 a -> V3 a
 rotate (Transformation rot _) v = rot !* v
 
@@ -60,3 +62,21 @@ rotation plane angle = Transformation
     s = sin angle
     l :: Lens' (M33 a) (M22 a)
     l = column plane . plane
+
+-- Composition and identity transformation.
+instance (Num a) => Monoid (Transformation a) where
+  mempty = Transformation identity zero
+  mappend (Transformation rot2 trans2) (Transformation rot1 trans1) =
+    Transformation (rot2 !*! rot1) ((rot2 !* trans1) + trans2)
+
+-- Actually, rigid transformations form a group, not just a monoid.
+-- (And computing the inverse is not very expensive,
+-- because the rotation matrix is orthogonal.)
+invert :: (Num a) => Transformation a -> Transformation a
+invert (Transformation rot trans) =
+  Transformation rot' (negated (rot' !* trans))
+  where rot' = transpose rot
+
+-- Note:
+-- 'transform' (and also 'rotate') is a group action:
+--   transform (s <> t) == transform s . transform t
