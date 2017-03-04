@@ -2,7 +2,7 @@
 
 module EventHandling
   ( State(..)
-  , window, scene, eye
+  , window, scene, eye, lastTick
   , handleEvent
   ) where
 
@@ -11,6 +11,7 @@ import Graphics.Rendering.OpenGL (GLfloat)
 import Control.Lens
 import Data.Int (Int32)
 import Data.Monoid
+import Data.Word
 
 import Scene
 import Object
@@ -22,6 +23,7 @@ data State = State
   { _window :: Window
   , _scene :: Scene (Transformation GLfloat) (Object GLfloat)
   , _eye :: Transformation GLfloat
+  , _lastTick :: Word32
   }
 
 makeLenses ''State
@@ -44,4 +46,4 @@ handleMouseMotion (V2 dx dy) = return . over eye
   ((   rotation _xz (fromIntegral (-dx) * sensitivity)
     <> rotation _yz (fromIntegral dy    * sensitivity) ) <>)
   where
-    sensitivity = 0.01
+    sensitivity = 0.005
