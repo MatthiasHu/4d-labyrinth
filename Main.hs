@@ -15,7 +15,7 @@ import Render
 main :: IO ()
 main = do
   window <- setup
-  (scene, eye) <- randomScene
+  (scene, eye) <- randomTunnel 10
   let state = State window scene eye
   mainLoop state
 
@@ -35,6 +35,6 @@ mainLoopEvent (Event _ payload) =
 
 render :: State -> IO ()
 render s = do
-  GL.clear [GL.ColorBuffer]
+  GL.clear [GL.ColorBuffer, GL.DepthBuffer]
   renderScene $ Transformed (s ^. eye) (s ^. scene)
   glSwapWindow (s ^. window)

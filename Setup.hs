@@ -27,12 +27,14 @@ windowConfig = defaultWindow
 setupGL :: IO ()
 setupGL = do
   -- set background color
-  clearColor $= Color4 0 0 0.2 1
+  clearColor $= Color4 0 0 0 1
   -- setup projection matrix
   matrixMode $= Projection
   loadIdentity
-  GL.frustum (-0.1) 0.1 (-0.1) 0.1 0.2 100
+  GL.frustum (-0.1) 0.1 (-0.1) 0.1 0.1 100
   matrixMode $= Modelview 0
+  -- depth test
+  depthFunc $= Just Lequal
 
 quitAndExit :: IO a
 quitAndExit = quit >> exitSuccess
