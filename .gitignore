@@ -1,2 +1,5 @@
 Main
-out
+out/
+.cabal-sandbox
+cabal.sandbox.config
+dist/
