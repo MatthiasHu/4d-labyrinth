@@ -53,11 +53,13 @@ tick :: State -> IO State
 tick s0 = do
   let s = over lastTick (+tickInterval) s0
   keydown <- getKeyboardState
-  return $ s & if keydown ScancodeW
-    then over eye (translation (V3 0 0 speed) <>)
-    else id
+  let movement = speed * ( val (keydown ScancodeW)
+                         - val (keydown ScancodeS) )
+      val True = 1
+      val False = 0
+  return $ s & over eye (translation (V3 0 0 movement) <>)
   where
-    speed = 0.15
+    speed = 0.10
 
 render :: State -> IO ()
 render s = do
