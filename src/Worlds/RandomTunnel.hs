@@ -13,13 +13,19 @@ import Worlds.RandomColorBox
 import Transformation
 import Scene
 import Object
+import Objects.Tetrahedron
+import Color
 
 
 randomTunnel :: (MonadRandom m, Floating a) =>
   Int -> m (Scene (Transformation a) (Object a), Transformation a)
 randomTunnel n = do
   path <- randomPath (pure (n-1)) (pure 1)
-  scene <- randomColorBox n (`Set.notMember` (Set.fromList path))
+  tunnelBox <- randomColorBox n (`Set.notMember` (Set.fromList path))
+  let crystal = Transformed
+        (translation . pure . fromIntegral $ (n-1))
+        (SceneObject $ tetrahedron 0.3 white)
+      scene = SceneFork [tunnelBox, crystal]
   return (scene, translation (V3 (-1) (-1) (-1)))
 
 -- A random monotonous path connecting two points.

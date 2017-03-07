@@ -1,8 +1,7 @@
 module Color
   ( Color
-  , red
-  , green
-  , blue
+  , red, green, blue
+  , white, grey
   , randomColor
   ) where
 
@@ -17,6 +16,10 @@ red, green, blue :: Color
 red   = Color3 1 0 0
 green = Color3 0 1 0
 blue  = Color3 0 0 1
+
+white, grey :: Color
+white = Color3 1 1 1
+grey = Color3 0.5 0.5 0.5
 
 
 -- Map numbers between 0 and 1 to nice colors.
