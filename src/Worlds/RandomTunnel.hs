@@ -1,5 +1,3 @@
-{-# LANGUAGE Rank2Types #-}
-
 module Worlds.RandomTunnel
   ( randomTunnel
   ) where
