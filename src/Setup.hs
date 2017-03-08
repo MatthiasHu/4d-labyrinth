@@ -1,15 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 
 module Setup
   ( setup
-  , quitAndExit
   , setViewport
+  , quitAndExit
   ) where
 
 import SDL
 import Graphics.Rendering.OpenGL as GL
 import System.Exit
+
+import Shaders
 
 
 setup :: IO Window
@@ -17,7 +18,6 @@ setup = do
   initialize [InitVideo]
   setMouseLocationMode RelativeLocation
   window <- createWindow "3d labyrinth" windowConfig
-  glContext <- glCreateContext window
   setupGL window
   return window
 
@@ -28,15 +28,11 @@ windowConfig = defaultWindow
 
 setupGL :: Window -> IO ()
 setupGL w = do
-  -- setup viewport and projection matrix
+  glContext <- glCreateContext w
+  setupShaders
   setViewport w
-  -- set background color
   clearColor $= Color4 0 0 0 1
-  -- depth test
   depthFunc $= Just Lequal
-
-quitAndExit :: IO a
-quitAndExit = quit >> exitSuccess
 
 setViewport :: Window -> IO ()
 setViewport w = do
@@ -60,3 +56,6 @@ setProjectionMatrix aspect = do
   where
     -- angle of view ratio
     aov = 1
+
+quitAndExit :: IO a
+quitAndExit = quit >> exitSuccess

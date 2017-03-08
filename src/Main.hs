@@ -17,9 +17,9 @@ import Transformation
 main :: IO ()
 main = do
   window <- setup
-  (scene, eye) <- randomPeaks 10
-  t <- ticks
-  let state = State window scene eye t
+  (scene, eye) <- randomTunnel 10
+  startTime <- ticks
+  let state = State window scene eye startTime
   mainLoop state
 
 mainLoop :: State -> IO ()
