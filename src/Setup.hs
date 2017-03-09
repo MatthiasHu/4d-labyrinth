@@ -13,26 +13,27 @@ import System.Exit
 import Shaders
 
 
-setup :: IO Window
+setup :: IO (Window, ShaderLocations)
 setup = do
   initialize [InitVideo]
   setMouseLocationMode RelativeLocation
   window <- createWindow "3d labyrinth" windowConfig
-  setupGL window
-  return window
+  shaderLocs <- setupGL window
+  return (window, shaderLocs)
 
 windowConfig = defaultWindow
   { windowOpenGL = Just defaultOpenGL
   , windowMode = FullscreenDesktop
   }
 
-setupGL :: Window -> IO ()
+setupGL :: Window -> IO ShaderLocations
 setupGL w = do
   glContext <- glCreateContext w
-  setupShaders
+  shaderLocs <- setupShaders
   setViewport w
   clearColor $= Color4 0 0 0 1
   depthFunc $= Just Lequal
+  return shaderLocs
 
 setViewport :: Window -> IO ()
 setViewport w = do

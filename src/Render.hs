@@ -6,22 +6,29 @@ module Render
 import Graphics.Rendering.OpenGL hiding (Face)
 import Control.Lens hiding (transform)
 import Linear
+import Linear.Affine
 
 import Object
 import Scene
 import Transformation
+import Shaders
 
 
-renderObject :: (VertexComponent a) => Object a -> IO ()
-renderObject = mapM_ renderFace . view objectFaces
+renderObject :: (VertexComponent a, VertexAttribComponent a) =>
+  ShaderLocations -> Object a -> IO ()
+renderObject locs = mapM_ (renderFace locs) . view objectFaces
 
-renderFace :: (VertexComponent a) => Face a -> IO ()
-renderFace (Face c vertices) = do
-  color c
-  renderPrimitive Polygon $ mapM_ vertex' vertices
+renderFace :: (VertexComponent a, VertexAttribComponent a) =>
+  ShaderLocations -> Face a -> IO ()
+renderFace locs f = do
+  color (f ^. faceColor)
+  normal' (f ^. faceNormal)
+  renderPrimitive Polygon . mapM_ vertex' $ f ^. faceVertices
   where
-    vertex' (V3 x y z) = vertex (Vertex3 x y z)
+    vertex' (P (V3 x y z)) = vertex (Vertex3 x y z)
+    normal' (V3 x y z) =
+      vertexAttrib ToFloat (locs ^. aNormal) (Vector3 x y z)
 
-renderScene :: (VertexComponent a, Num a) =>
-  Scene (Transformation a) (Object a) -> IO ()
-renderScene = mapM_ (renderObject . uncurry transform) . sceneObjects
+renderScene :: (VertexComponent a, VertexAttribComponent a, Num a) =>
+  ShaderLocations -> Scene (Transformation a) (Object a) -> IO ()
+renderScene locs = mapM_ (renderObject locs . uncurry transform) . sceneObjects

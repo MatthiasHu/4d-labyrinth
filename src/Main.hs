@@ -16,10 +16,10 @@ import Transformation
 
 main :: IO ()
 main = do
-  window <- setup
+  (window, shaderLocs) <- setup
   (scene, eye) <- randomTunnel 10
   startTime <- ticks
-  let state = State window scene eye startTime
+  let state = State window shaderLocs scene eye startTime
   mainLoop state
 
 mainLoop :: State -> IO ()
@@ -28,7 +28,6 @@ mainLoop s = do
   case mE of
     Just e -> mainLoopEvent e s
     Nothing -> render s >> mainLoopIdle s
-
 
 mainLoopEvent :: Event -> State -> IO ()
 mainLoopEvent (Event _ payload) =
@@ -64,5 +63,5 @@ tick s0 = do
 render :: State -> IO ()
 render s = do
   GL.clear [GL.ColorBuffer, GL.DepthBuffer]
-  renderScene $ Transformed (s ^. eye) (s ^. scene)
+  renderScene (s ^. shaderLocs) $ Transformed (s ^. eye) (s ^. scene)
   glSwapWindow (s ^. window)

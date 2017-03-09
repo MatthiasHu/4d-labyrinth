@@ -2,7 +2,7 @@
 
 module EventHandling
   ( State(..)
-  , window, scene, eye, lastTick
+  , window, shaderLocs, scene, eye, lastTick
   , handleEvent
   ) where
 
@@ -17,10 +17,12 @@ import Scene
 import Object
 import Transformation
 import Setup
+import Shaders
 
 
 data State = State
   { _window :: Window
+  , _shaderLocs :: ShaderLocations
   , _scene :: Scene (Transformation GLfloat) (Object GLfloat)
   , _eye :: Transformation GLfloat
   , _lastTick :: Word32

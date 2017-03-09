@@ -1,17 +1,18 @@
 {-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Transformation
   ( Transformation
   , Transformable
   , transform
-  , rotate
   , translation
   , rotation
   , invert
   ) where
 
-import Linear hiding (transform, rotate, translation)
+import Linear hiding (translation)
+import Linear.Affine
 import Control.Lens hiding (transform)
 
 
@@ -31,16 +32,16 @@ data Transformation a = Transformation
 class Transformable f where
   transform :: (Num a) => Transformation a -> f a -> f a
 
--- Apply the transformation to a vector.
-instance Transformable V3 where
-  transform (Transformation rot trans) v = rot !* v + trans
+-- Apply the trnsformation to a point.
+instance Transformable (Point V3) where
+  transform (Transformation rot trans) (P p) = (P (rot !* p) .+^ trans)
 
--- Only apply the rotation part to a vector.
+-- Apply the (rotation part of the) transformation to a vector.
 -- This is appropriate when the vector does not represent
 -- a point in space, but rather a direction (with length),
 -- like normal vectors do.
-rotate :: (Num a) => Transformation a -> V3 a -> V3 a
-rotate (Transformation rot _) v = rot !* v
+instance Transformable V3 where
+  transform (Transformation rot _) v = rot !* v
 
 -- A pure translation.
 translation :: (Num a) => V3 a -> Transformation a
@@ -78,5 +79,5 @@ invert (Transformation rot trans) =
   where rot' = transpose rot
 
 -- Note:
--- 'transform' (and also 'rotate') is a group action:
+-- 'transform' is a group action:
 --   transform (s <> t) == transform s . transform t
