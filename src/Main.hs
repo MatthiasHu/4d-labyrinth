@@ -46,6 +46,7 @@ mainLoopIdle s = do
   where
     nextTick = (s ^. lastTick) + tickInterval
 
+tickInterval :: (Num a) => a
 tickInterval = 30
 
 tick :: State -> IO State

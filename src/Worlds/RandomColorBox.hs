@@ -2,7 +2,6 @@ module Worlds.RandomColorBox
   ( randomColorBox
   ) where
 
-import Control.Monad
 import Control.Monad.Random
 import Linear hiding (translation)
 
