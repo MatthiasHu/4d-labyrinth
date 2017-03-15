@@ -12,6 +12,7 @@ import Scene
 import EventHandling
 import Render
 import Transformation
+import Movement
 
 
 main :: IO ()
@@ -53,11 +54,8 @@ tick :: State -> IO State
 tick s0 = do
   let s = over lastTick (+tickInterval) s0
   keydown <- getKeyboardState
-  let movement = speed * ( val (keydown ScancodeW)
-                         - val (keydown ScancodeS) )
-      val True = 1
-      val False = 0
-  return $ s & over eye (translation (V3 0 0 movement) <>)
+  return $ s
+    & movementInput speed (keydown ScancodeW) (keydown ScancodeS)
   where
     speed = 0.10
 

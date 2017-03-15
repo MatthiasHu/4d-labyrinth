@@ -4,6 +4,7 @@
 
 module Transformation
   ( Transformation
+  , rotationPart, translationPart
   , Transformable
   , transform
   , translation
