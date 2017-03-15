@@ -5,8 +5,7 @@ module Worlds.RandomColorBox
 import Control.Monad.Random
 import Linear hiding (translation)
 
-import Scene
-import Object
+import SceneTO
 import Objects.Cube
 import Transformation
 import Color
@@ -14,7 +13,7 @@ import Color
 
 randomColorBox :: (MonadRandom m, Floating a) =>
   Int -> (V3 Int -> Bool)
-  -> m (Scene (Transformation a) (Object a))
+  -> m (SceneTO a)
 randomColorBox n p = fmap SceneFork $ sequence
   [ makeCube (V3 x y z) <$> randomColor
   | x <- [0..n], y <- [0..n], z <- [0..n], p (V3 x y z) ]

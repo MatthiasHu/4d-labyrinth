@@ -4,14 +4,12 @@ import SDL hiding (translation)
 import qualified Graphics.Rendering.OpenGL as GL
 import Control.Monad
 import Control.Lens
-import Data.Monoid
 
 import Setup
 import Worlds
 import Scene
 import EventHandling
 import Render
-import Transformation
 import Movement
 
 

@@ -8,13 +8,12 @@ import Linear hiding (translation)
 
 import Worlds.RandomColorBox
 import Transformation
-import Scene
-import Object
+import SceneTO
 import Objects.Tree
 
 
 randomPeaks :: (MonadRandom m, Floating a) =>
-  Int -> m (Scene (Transformation a) (Object a), Transformation a)
+  Int -> m (SceneTO a, Transformation a)
 randomPeaks n = do
   heights <- randomHeightMap n
   boxes <- randomColorBox n $

@@ -9,7 +9,7 @@ import Linear
 import Linear.Affine
 
 import Object
-import Scene
+import SceneTO
 import Transformation
 import Shaders
 
@@ -30,5 +30,5 @@ renderFace locs f = do
       vertexAttrib ToFloat (locs ^. aNormal) (Vector3 x y z)
 
 renderScene :: (VertexComponent a, VertexAttribComponent a, Num a) =>
-  ShaderLocations -> Scene (Transformation a) (Object a) -> IO ()
+  ShaderLocations -> SceneTO a -> IO ()
 renderScene locs = mapM_ (renderObject locs . uncurry transform) . sceneObjects

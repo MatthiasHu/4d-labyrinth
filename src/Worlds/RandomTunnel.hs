@@ -9,14 +9,13 @@ import Control.Lens
 
 import Worlds.RandomColorBox
 import Transformation
-import Scene
-import Object
+import SceneTO
 import Objects.Tetrahedron
 import Color
 
 
 randomTunnel :: (MonadRandom m, Floating a) =>
-  Int -> m (Scene (Transformation a) (Object a), Transformation a)
+  Int -> m (SceneTO a, Transformation a)
 randomTunnel n = do
   path <- randomPath (pure (n-1)) (pure 1)
   tunnelBox <- randomColorBox n (`Set.notMember` (Set.fromList path))

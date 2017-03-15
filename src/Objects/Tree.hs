@@ -8,12 +8,11 @@ import Data.Monoid
 import Objects.Stick
 import Objects.Tetrahedron
 import Color
-import Scene
+import SceneTO
 import Transformation
-import Object
 
 
-tree :: (Floating a) => Scene (Transformation a) (Object a)
+tree :: (Floating a) => SceneTO a
 tree = SceneFork
   [ SceneObject $ stick 4 0.15 h red
   , Transformed

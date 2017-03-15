@@ -13,8 +13,7 @@ import Data.Int (Int32)
 import Data.Monoid
 import Data.Word
 
-import Scene
-import Object
+import SceneTO
 import Transformation
 import Setup
 import Shaders
@@ -23,7 +22,7 @@ import Shaders
 data State = State
   { _window :: Window
   , _shaderLocs :: ShaderLocations
-  , _scene :: Scene (Transformation GLfloat) (Object GLfloat)
+  , _scene :: SceneTO GLfloat
   , _eye :: Transformation GLfloat
   , _lastTick :: Word32
   }
