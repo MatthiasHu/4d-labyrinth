@@ -5,7 +5,8 @@ module Object
   ( Object(..)
   , objectFaces
   , Face(..)
-  , faceColor, faceVertices, faceNormal
+  , faceColor, faceVertices, faceNormal, faceDistance
+  , boundingInequalities
   ) where
 
 import Linear
@@ -30,6 +31,7 @@ data Face a = Face
   { _faceColor :: Color
   , _faceVertices :: [Point V3 a]
   , _faceNormal :: V3 a
+  , _faceDistance :: a
   }
   deriving (Functor)
 
@@ -37,9 +39,14 @@ makeLenses ''Object
 makeLenses ''Face
 
 instance Transformable Face where
-  transform t =
-      (over faceVertices $ map (transform t))
-    . (over faceNormal $ transform t)
+  transform t f = f &
+      (faceVertices . each %~ transform t)
+    . (faceNormal %~ transform t)
+    . (faceDistance +~ translationPart t `dot` (f ^. faceNormal))
 
 instance Transformable Object where
-  transform t = over objectFaces $ map (transform t)
+  transform t = objectFaces . each %~ transform t
+
+boundingInequalities :: Object a -> [(V3 a, a)]
+boundingInequalities =
+  map (\f -> (f ^. faceNormal, f ^. faceDistance)) . view objectFaces

@@ -11,7 +11,10 @@ import Color
 
 tetrahedron :: (Floating a) => a -> Color -> Object a
 tetrahedron radius c =
-  Object . map (uncurry (Face c)) $ tetrahedronFaces radius
+  Object . map (($ faceDist) . uncurry (Face c))
+  $ tetrahedronFaces radius
+  where
+    faceDist = 1 / sqrt 3
 
 tetrahedronFaces :: Floating a => a -> [([Point V3 a], V3 a)]
 tetrahedronFaces radius = do

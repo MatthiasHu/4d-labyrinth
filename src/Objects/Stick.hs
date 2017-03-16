@@ -15,9 +15,11 @@ stick n r l c = Object $
               [ withZ 0 (r *^ dir i) , withZ 0 (r *^ dir (i+1))
               , withZ l (r *^ dir (i+1)) , withZ l (r *^ dir i) ])
       (withZ 0 (dir (i+0.5)))
+      faceDist
   | i <- map fromIntegral [0..(n-1)] ]
   where
     dir i = let phi = i*tau/fromIntegral n
             in V2 (cos phi) (sin phi)
     withZ z (V2 x y) = V3 x y z
+    faceDist = r * cos (0.5 * tau/fromIntegral n)
     tau = 2*pi

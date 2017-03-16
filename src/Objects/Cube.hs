@@ -11,7 +11,7 @@ import Color
 
 
 cube :: (Floating a) => Color -> Object a
-cube c = Object $ map (uncurry (Face c)) cubeFaces
+cube c = Object $ map (($ radius) . uncurry (Face c)) cubeFaces
 
 cubeFaces :: (Floating a) => [([Point V3 a], V3 a)]
 cubeFaces = do
@@ -26,4 +26,6 @@ cubeFaces = do
         , p & b %~ negate
         ]
   return (vertices, normal)
-  where radius = 0.5
+
+radius :: (Fractional a) => a
+radius = 0.5
