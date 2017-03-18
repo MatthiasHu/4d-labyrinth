@@ -31,4 +31,4 @@ renderFace locs f = do
 
 renderScene :: (VertexComponent a, VertexAttribComponent a, Num a) =>
   ShaderLocations -> SceneTO a -> IO ()
-renderScene locs = mapM_ (renderObject locs . uncurry transform) . sceneObjects
+renderScene locs = mapM_ (renderObject locs) . transformedSceneObjects
