@@ -12,7 +12,7 @@ import SceneTO
 import Objects.Tree
 
 
-randomPeaks :: (MonadRandom m, Floating a) =>
+randomPeaks :: (MonadRandom m, Floating a, Epsilon a) =>
   Int -> m (SceneTO a, Transformation a)
 randomPeaks n = do
   heights <- randomHeightMap n

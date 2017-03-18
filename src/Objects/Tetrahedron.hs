@@ -9,18 +9,20 @@ import Object
 import Color
 
 
-tetrahedron :: (Floating a) => a -> Color -> Object a
+tetrahedron :: (Floating a, Epsilon a) =>
+  a -> Color -> Object a
 tetrahedron radius c =
-  Object . map (($ faceDist) . uncurry (Face c))
+  Object zero radius . map (($ faceDist) . uncurry (Face c))
   $ tetrahedronFaces radius
   where
     faceDist = radius / sqrt 3
 
-tetrahedronFaces :: Floating a => a -> [([Point V3 a], V3 a)]
+tetrahedronFaces :: (Floating a, Epsilon a) =>
+  a -> [([Point V3 a], V3 a)]
 tetrahedronFaces radius = do
   x <- [V3 (-1) 0 0, V3 1 0 0]
   y <- [V3 0 (-1) 0, V3 0 1 0]
   z <- [V3 0 0 (-1), V3 0 0 1]
   let faces = map (^* radius) [P x, P y, P z]
-      normal = (x ^+^ y ^+^ z) / sqrt 3
+      normal = normalize (x ^+^ y ^+^ z)
   return (faces, normal)

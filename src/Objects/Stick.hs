@@ -10,7 +10,7 @@ import Color
 
 
 stick :: (Floating a) => Int -> a -> a -> Color -> Object a
-stick n r l c = Object $
+stick n r l c = Object (P (V3 0 0 (l/2))) (norm $ V2 (l/2) r) $
   [ Face c (map P
               [ bot i     , bot (i+1)
               , top (i+1) , top i     ])

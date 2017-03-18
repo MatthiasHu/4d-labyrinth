@@ -14,7 +14,7 @@ import Objects.Tetrahedron
 import Color
 
 
-randomTunnel :: (MonadRandom m, Floating a) =>
+randomTunnel :: (MonadRandom m, Floating a, Epsilon a) =>
   Int -> m (SceneTO a, Transformation a)
 randomTunnel n = do
   path <- randomPath (pure (n-1)) (pure 1)

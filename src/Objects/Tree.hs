@@ -12,7 +12,7 @@ import SceneTO
 import Transformation
 
 
-tree :: (Floating a) => SceneTO a
+tree :: (Floating a, Epsilon a) => SceneTO a
 tree = SceneFork
   [ SceneObject $ stick 4 0.15 h red
   , Transformed (translation (V3 0 0 h) <> rotation _xy (tau/8))

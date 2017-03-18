@@ -6,6 +6,7 @@ module Interval
   , wholeLine
   , upTo, fromOn
   , intersect
+  , magnitude
   ) where
 
 
@@ -46,3 +47,6 @@ intersect :: (Ord a) => Interval a -> Interval a -> Maybe (Interval a)
 intersect (Interval l1 u1) (Interval l2 u2)
   | u1 <= l2 || u2 <= l1  = Nothing
   | otherwise  = Just $ Interval (max l1 l2) (min u1 u2)
+
+magnitude :: (Num a, Ord a) => Interval a -> a
+magnitude (Interval l u) = max (abs l) (abs u)

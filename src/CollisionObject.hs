@@ -16,7 +16,7 @@ import Interval
 
 type Ray a = (Point V3 a, V3 a)
 
-collisionTimeScene :: (Ord a, Fractional a) =>
+collisionTimeScene :: (Ord a, Floating a) =>
   a -> Ray a -> Interval a -> SceneTO a -> Maybe a
 collisionTimeScene margin ray scope scene =
   case ts of
@@ -26,7 +26,11 @@ collisionTimeScene margin ray scope scene =
     ts = filter (> lowerBound scope)
          . map lowerBound . catMaybes
          . map (collisionIntervalObject margin ray scope)
-         $ transformedSceneObjects scene
+         $ relevantObjects
+    relevantObjects =
+      filter (inReach (fst ray) reach) $
+        transformedSceneObjects scene
+    reach = magnitude scope * norm (snd ray)
 
 collisionIntervalObject :: (Ord a, Fractional a) =>
   a -> Ray a -> Interval a -> Object a -> Maybe (Interval a)

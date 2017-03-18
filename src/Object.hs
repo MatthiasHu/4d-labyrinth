@@ -3,10 +3,11 @@
 
 module Object
   ( Object(..)
-  , objectFaces
+  , objectCenter, objectRadius, objectFaces
   , Face(..)
   , faceColor, faceVertices, faceNormal, faceDistance
   , boundingInequalities
+  , inReach
   ) where
 
 import Linear
@@ -20,7 +21,9 @@ import Transformation
 -- a graphical object,
 -- consisting of some faces
 data Object a = Object
-  { _objectFaces :: [Face a]
+  { _objectCenter :: Point V3 a
+  , _objectRadius :: a
+  , _objectFaces :: [Face a]
   }
   deriving (Functor)
 
@@ -46,8 +49,14 @@ instance Transformable Face where
                        transform t (f ^. faceNormal))
 
 instance Transformable Object where
-  transform t = objectFaces . each %~ transform t
+  transform t =
+      (objectFaces . each %~ transform t)
+    . (objectCenter %~ transform t)
 
 boundingInequalities :: Object a -> [(V3 a, a)]
 boundingInequalities =
   map (\f -> (f ^. faceNormal, f ^. faceDistance)) . view objectFaces
+
+inReach :: (Floating a, Ord a) => Point V3 a -> a -> Object a -> Bool
+inReach p r o =
+  distance p (o ^. objectCenter) <= r + (o ^. objectRadius)

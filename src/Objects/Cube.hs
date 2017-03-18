@@ -11,7 +11,8 @@ import Color
 
 
 cube :: (Floating a) => Color -> Object a
-cube c = Object $ map (($ radius) . uncurry (Face c)) cubeFaces
+cube c = Object zero (sqrt 3 * radius) $
+  map (($ radius) . uncurry (Face c)) cubeFaces
 
 cubeFaces :: (Floating a) => [([Point V3 a], V3 a)]
 cubeFaces = do
