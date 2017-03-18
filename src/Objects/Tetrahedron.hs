@@ -14,7 +14,7 @@ tetrahedron radius c =
   Object . map (($ faceDist) . uncurry (Face c))
   $ tetrahedronFaces radius
   where
-    faceDist = 1 / sqrt 3
+    faceDist = radius / sqrt 3
 
 tetrahedronFaces :: Floating a => a -> [([Point V3 a], V3 a)]
 tetrahedronFaces radius = do
