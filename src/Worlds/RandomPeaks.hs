@@ -19,9 +19,12 @@ randomPeaks n = do
   boxes <- randomColorBox n $
     \(V3 x y z) -> (heights Map.! (x, y)) >= z
   let
-    translated x y z = Transformed . translation . (^+^ V3 0 0 0.5) . fmap fromIntegral $ V3 x y z
-    trees = SceneFork [ translated x y (heights Map.! (x, y)) tree
-                        | (x, y) <- peaks n heights ]
+    translated x y z =
+      Transformed . translation . (^+^ V3 0 0 0.5) . fmap fromIntegral
+        $ V3 x y z
+    trees = SceneFork
+      [ translated x y (heights Map.! (x, y)) tree
+      | (x, y) <- peaks n heights ]
   return ( SceneFork [boxes, trees]
          , translation (V3 0 0 (fromIntegral (-n-1))) )
 
