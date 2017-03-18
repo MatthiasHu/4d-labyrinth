@@ -2,6 +2,7 @@ module Interval
   ( Interval
   , lowerBound, upperBound
   , mkInterval
+  , interval
   , wholeLine
   , upTo, fromOn
   , intersect
@@ -22,6 +23,11 @@ data Interval a = Interval
 mkInterval :: (Ord a) => a -> a -> Maybe (Interval a)
 mkInterval l u | l < u      = Just (Interval l u)
                | otherwise  = Nothing
+
+interval :: (Ord a) => a -> a -> Interval a
+interval l u = case mkInterval l u of
+  Just int -> int
+  Nothing -> error "invalid interval bounds"
 
 negInfty, posInfty :: (Fractional a) => a
 negInfty = -1/0

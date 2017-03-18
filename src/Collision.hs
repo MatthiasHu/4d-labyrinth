@@ -17,8 +17,8 @@ type Inequality f a = (f a, a)
 
 
 collisionInterval :: (Metric f, Foldable t, Ord a, Fractional a) =>
-  Ray f a -> t (Inequality f a) -> Maybe (Interval a)
-collisionInterval ray = foldM go wholeLine
+  Ray f a -> Interval a -> t (Inequality f a) -> Maybe (Interval a)
+collisionInterval ray = foldM go
   where
     go oldInterval inequality = do
       newInterval <- fulfillingInterval ray inequality
