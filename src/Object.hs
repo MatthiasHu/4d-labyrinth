@@ -42,7 +42,8 @@ instance Transformable Face where
   transform t f = f &
       (faceVertices . each %~ transform t)
     . (faceNormal %~ transform t)
-    . (faceDistance +~ translationPart t `dot` (f ^. faceNormal))
+    . (faceDistance +~ translationPart t `dot`
+                       transform t (f ^. faceNormal))
 
 instance Transformable Object where
   transform t = objectFaces . each %~ transform t
