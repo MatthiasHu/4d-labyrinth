@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Worlds.RandomTunnel
   ( randomTunnel
   ) where
@@ -5,7 +7,6 @@ module Worlds.RandomTunnel
 import Control.Monad.Random
 import qualified Data.Set as Set
 import Linear hiding (translation)
-import Control.Lens
 
 import Worlds.RandomColorBox
 import Transformation
@@ -26,21 +27,15 @@ randomTunnel n = do
   return (scene, translation (V3 (-1) (-1) (-1)))
 
 -- A random monotonous path connecting two points.
-randomPath :: (MonadRandom m) => V3 Int -> V3 Int -> m [V3 Int]
+randomPath :: forall v m.
+  (Metric v, Traversable v, MonadRandom m) =>
+  v Int -> v Int -> m [v Int]
 randomPath a b = if null dirs then return [a]
   else do
     d <- uniform dirs
-    let a' = if a ^. lens d > b ^. lens d
-             then a & lens d -~ 1
-             else a & lens d +~ 1
+    let a' = a ^+^ d ^* (signum $ (b ^-^ a) `dot` d)
     rest <- randomPath a' b
     return (a:rest)
   where
-    -- This ugly list of Ints is here
-    -- because Lenses don't like to be in lists very much.
-    -- (impredicative polymorphism errors...)
-    dirs :: [Int]
-    dirs = filter (\d -> a^.lens d /= b^.lens d) [1, 2, 3]
-    lens 1 = _x
-    lens 2 = _y
-    lens 3 = _z
+    dirs :: [v Int]
+    dirs = filter (\e -> a `dot` e /= b `dot` e) basis
