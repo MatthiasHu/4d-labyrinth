@@ -11,7 +11,7 @@ import Linear hiding (translation)
 import Worlds.RandomColorBox
 import Transformation
 import SceneTO
-import Objects.Tetrahedron
+import Objects.Octahedron
 import Color
 
 
@@ -22,7 +22,7 @@ randomTunnel n = do
   tunnelBox <- randomColorBox n (`Set.notMember` (Set.fromList path))
   let crystal = Transformed
         (translation . pure . fromIntegral $ (n-1))
-        (SceneObject $ tetrahedron 0.3 white)
+        (SceneObject $ octahedron 0.3 white)
       scene = SceneFork [tunnelBox, crystal]
   return (scene, translation (V3 (-1) (-1) (-1)))
 

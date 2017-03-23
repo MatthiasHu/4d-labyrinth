@@ -1,5 +1,5 @@
-module Objects.Tetrahedron
-  ( tetrahedron
+module Objects.Octahedron
+  ( octahedron
   ) where
 
 import Linear
@@ -9,17 +9,17 @@ import Object
 import Color
 
 
-tetrahedron :: (Floating a, Epsilon a) =>
+octahedron :: (Floating a, Epsilon a) =>
   a -> Color -> Object a
-tetrahedron radius c =
+octahedron radius c =
   Object zero radius . map (($ faceDist) . uncurry (Face c))
-  $ tetrahedronFaces radius
+  $ octahedronFaces radius
   where
     faceDist = radius / sqrt 3
 
-tetrahedronFaces :: (Floating a, Epsilon a) =>
+octahedronFaces :: (Floating a, Epsilon a) =>
   a -> [([Point V3 a], V3 a)]
-tetrahedronFaces radius = do
+octahedronFaces radius = do
   x <- [V3 (-1) 0 0, V3 1 0 0]
   y <- [V3 0 (-1) 0, V3 0 1 0]
   z <- [V3 0 0 (-1), V3 0 0 1]
