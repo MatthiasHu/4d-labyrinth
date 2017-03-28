@@ -2,8 +2,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE UndecidableInstances #-}
 
 module Transformation
   ( Transformation
@@ -18,30 +16,32 @@ module Transformation
 import Linear hiding (translation)
 import Linear.Affine
 import Control.Lens hiding (transform)
-import Data.Functor.Rep
-import Data.Distributive
+
+import Constraints.Vector
 
 
 -- Parametrized matrix type.
 type M v a = v (v a)
 
+-- Transformation type with indefinite matrix and vector types.
+-- Mainly for easy Show instance.
+data TransformationRaw m v = Transformation
+  { rotationPart :: m
+  , translationPart :: v
+  }
+  deriving (Show, Eq)
+
 -- A roto-translation / rigid transformation of euclidean space,
 -- that is, an orthogonal, affine mapping, preserving orientation.
-data Transformation v a = Transformation
-  { rotationPart :: M v a
-  , translationPart :: v a
-  }
+-- The vector type parameter (v) determines the dimension of the space.
+type Transformation v a = TransformationRaw (M v a) (v a)
 
-deriving instance (Show (v a), Show (M v a)) =>
-  Show (Transformation v a)
-deriving instance (Eq (v a), Eq (M v a)) =>
-  Eq (Transformation v a)
 
 class Transformable v f where
   transform :: (Num a) => Transformation v a -> f a -> f a
 
 -- Apply the trnsformation to a point.
-instance (Additive v, Foldable v) =>
+instance (SomeVector v) =>
   Transformable v (Point v) where
   transform (Transformation rot trans) (P p) = (P (rot !* p) .+^ trans)
 
@@ -49,22 +49,19 @@ instance (Additive v, Foldable v) =>
 -- This is appropriate when the vector does not represent
 -- a point in space, but rather a direction (with length),
 -- like normal vectors do.
-instance (Foldable v, Additive v) =>
+instance (SomeVector v) =>
   Transformable v v where
   transform (Transformation rot _) v = rot !* v
 
 -- A pure translation.
-translation :: (Applicative v, Traversable v, Num a) =>
+translation :: (SomeVector v, Num a) =>
   v a -> Transformation v a
 translation t = Transformation identity t
 
 -- A pure rotation.
 -- The lens specifies the plane to be rotated,
 -- the angle is in radians.
-rotation :: forall v a.
-  ( Traversable v, Applicative v, Representable v, Additive v
-  , Floating a
-  ) =>
+rotation :: forall v a. (SomeVector v, Floating a) =>
   (forall b. (Floating b) => Lens' (v b) (V2 b))
   -> a -> Transformation v a
 rotation plane angle = Transformation
@@ -79,7 +76,7 @@ rotation plane angle = Transformation
     l = column plane . plane
 
 -- Composition and identity transformation.
-instance (Applicative v, Traversable v, Additive v, Num a) =>
+instance (SomeVector v, Num a) =>
   Monoid (Transformation v a) where
   mempty = Transformation identity zero
   mappend (Transformation rot2 trans2) (Transformation rot1 trans1) =
@@ -88,7 +85,7 @@ instance (Applicative v, Traversable v, Additive v, Num a) =>
 -- Actually, rigid transformations form a group, not just a monoid.
 -- (And computing the inverse is not very expensive,
 -- because the rotation matrix is orthogonal.)
-invert :: (Additive v, Foldable v, Distributive v, Num a) =>
+invert :: (SomeVector v, Num a) =>
   Transformation v a -> Transformation v a
 invert (Transformation rot trans) =
   Transformation rot' (negated (rot' !* trans))

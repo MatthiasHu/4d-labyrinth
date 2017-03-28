@@ -16,6 +16,8 @@ import Linear
 import Linear.Affine
 import Control.Lens hiding (transform)
 
+import Constraints.Scalar
+import Constraints.Vector
 import Color
 import Transformation
 
@@ -26,7 +28,7 @@ data Object v a = Object
   , _objectRadius :: a
   , _objectFaces :: [Face v a]
   }
-  deriving (Functor)
+  deriving (Functor, Show)
 
 -- A face of an object.
 data Face v a = Face
@@ -35,19 +37,19 @@ data Face v a = Face
   , _faceNormal :: v a
   , _faceDistance :: a
   }
-  deriving (Functor)
+  deriving (Functor, Show)
 
 makeLenses ''Object
 makeLenses ''Face
 
-instance (Metric v, Foldable v) => Transformable v (Face v) where
+instance (SomeVector v) => Transformable v (Face v) where
   transform t f = f &
       (faceVertices . each %~ transform t)
     . (faceNormal %~ transform t)
     . (faceDistance +~ translationPart t `dot`
                        transform t (f ^. faceNormal))
 
-instance (Metric v, Foldable v) => Transformable v (Object v) where
+instance (SomeVector v) => Transformable v (Object v) where
   transform t =
       (objectFaces . each %~ transform t)
     . (objectCenter %~ transform t)
@@ -56,7 +58,7 @@ boundingInequalities :: Object v a -> [(v a, a)]
 boundingInequalities =
   map (\f -> (f ^. faceNormal, f ^. faceDistance)) . view objectFaces
 
-inReach :: (Metric v, Floating a, Ord a) =>
+inReach :: (SomeVector v, SomeScalar a) =>
   Point v a -> a -> Object v a -> Bool
 inReach p r o =
   distance p (o ^. objectCenter) <= r + (o ^. objectRadius)
