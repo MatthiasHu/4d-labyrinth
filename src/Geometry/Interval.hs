@@ -1,4 +1,4 @@
-module Interval
+module Geometry.Interval
   ( Interval
   , lowerBound, upperBound
   , mkInterval

@@ -16,7 +16,7 @@ import Movement
 main :: IO ()
 main = do
   (window, shaderLocs) <- setup
-  (scene, eye) <- randomTunnel 10
+  (scene, eye) <- randomTunnel 5
   startTime <- ticks
   let state = State window shaderLocs scene eye startTime
   mainLoop state

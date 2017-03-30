@@ -5,19 +5,20 @@ module Objects.Octahedron
 import Linear
 import Linear.Affine
 
+import Constraints.Scalar
 import Object
 import Color
 
 
-octahedron :: (Floating a, Epsilon a) =>
-  a -> Color -> Object a
+octahedron :: (SomeScalar a) =>
+  a -> Color -> Object V3 a
 octahedron radius c =
   Object zero radius . map (($ faceDist) . uncurry (Face c))
   $ octahedronFaces radius
   where
     faceDist = radius / sqrt 3
 
-octahedronFaces :: (Floating a, Epsilon a) =>
+octahedronFaces :: (SomeScalar a) =>
   a -> [([Point V3 a], V3 a)]
 octahedronFaces radius = do
   x <- [V3 (-1) 0 0, V3 1 0 0]

@@ -8,18 +8,19 @@ import Control.Lens hiding (transform)
 import Linear
 import Linear.Affine
 
+import Constraints.Scalar
 import Object
 import SceneTO
 import Transformation
 import Shaders
 
 
-renderObject :: (VertexComponent a, VertexAttribComponent a) =>
-  ShaderLocations -> Object a -> IO ()
+renderObject :: (SomeScalar a) =>
+  ShaderLocations -> Object V3 a -> IO ()
 renderObject locs = mapM_ (renderFace locs) . view objectFaces
 
-renderFace :: (VertexComponent a, VertexAttribComponent a) =>
-  ShaderLocations -> Face a -> IO ()
+renderFace :: (SomeScalar a) =>
+  ShaderLocations -> Face V3 a -> IO ()
 renderFace locs f = do
   color (f ^. faceColor)
   normal' (f ^. faceNormal)
@@ -29,6 +30,6 @@ renderFace locs f = do
     normal' (V3 x y z) =
       vertexAttrib ToFloat (locs ^. aNormal) (Vector3 x y z)
 
-renderScene :: (VertexComponent a, VertexAttribComponent a, Num a) =>
-  ShaderLocations -> SceneTO a -> IO ()
+renderScene :: (SomeScalar a) =>
+  ShaderLocations -> SceneTO V3 a -> IO ()
 renderScene locs = mapM_ (renderObject locs) . transformedSceneObjects

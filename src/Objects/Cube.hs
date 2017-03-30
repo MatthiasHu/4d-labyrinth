@@ -10,7 +10,7 @@ import Object
 import Color
 
 
-cube :: (Floating a) => Color -> Object a
+cube :: (Floating a) => Color -> Object V3 a
 cube c = Object zero (sqrt 3 * radius) $
   map (($ radius) . uncurry (Face c)) cubeFaces
 

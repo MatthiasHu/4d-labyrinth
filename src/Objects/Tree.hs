@@ -5,6 +5,7 @@ module Objects.Tree
 import Linear hiding (translation)
 import Data.Monoid
 
+import Constraints.Scalar
 import Objects.Stick
 import Objects.Octahedron
 import Color
@@ -12,7 +13,7 @@ import SceneTO
 import Transformation
 
 
-tree :: (Floating a, Epsilon a) => SceneTO a
+tree :: (SomeScalar a) => SceneTO V3 a
 tree = SceneFork
   [ SceneObject $ stick 4 0.15 h red
   , Transformed (translation (V3 0 0 h) <> rotation _xy (tau/8))

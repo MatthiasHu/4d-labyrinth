@@ -8,16 +8,17 @@ import Linear.Affine
 import Data.Maybe (catMaybes)
 import Control.Lens
 
-import Collision
+import Constraints.Vector
+import Constraints.Scalar
+import Geometry.Ray
+import Geometry.Interval
+import Geometry.Collision
 import Object
 import SceneTO
-import Interval
 
 
-type Ray a = (Point V3 a, V3 a)
-
-collisionTimeScene :: (Ord a, Floating a) =>
-  a -> Ray a -> Interval a -> SceneTO a -> Maybe a
+collisionTimeScene :: (SomeVector v, SomeScalar a) =>
+  a -> Ray v a -> Interval a -> SceneTO v a -> Maybe a
 collisionTimeScene margin ray scope scene =
   case ts of
     [] -> Nothing
@@ -32,8 +33,8 @@ collisionTimeScene margin ray scope scene =
         transformedSceneObjects scene
     reach = magnitude scope * norm (snd ray)
 
-collisionIntervalObject :: (Ord a, Fractional a) =>
-  a -> Ray a -> Interval a -> Object a -> Maybe (Interval a)
+collisionIntervalObject :: (SomeVector v, Ord a, Fractional a) =>
+  a -> Ray v a -> Interval a -> Object v a -> Maybe (Interval a)
 collisionIntervalObject margin ray scope =
   collisionInterval ray scope
   . map strengthenInequality

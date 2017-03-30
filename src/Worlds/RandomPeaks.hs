@@ -6,14 +6,15 @@ import Control.Monad.Random
 import qualified Data.Map as Map
 import Linear hiding (translation)
 
+import Constraints.Scalar
 import Worlds.RandomColorBox
 import Transformation
 import SceneTO
 import Objects.Tree
 
 
-randomPeaks :: (MonadRandom m, Floating a, Epsilon a) =>
-  Int -> m (SceneTO a, Transformation a)
+randomPeaks :: (MonadRandom m, SomeScalar a) =>
+  Int -> m (SceneTO V3 a, Transformation V3 a)
 randomPeaks n = do
   heights <- randomHeightMap n
   boxes <- randomColorBox n $

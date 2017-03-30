@@ -11,7 +11,7 @@ import Linear hiding (translation)
 
 
 randomScene :: (Monad m, Floating a) =>
-  m (SceneTO a, Transformation a)
+  m (SceneTO V3 a, Transformation V3 a)
 randomScene = return (scene, eye)
   where
     scene = Transformed (translation $ V3 1 0 (-4))

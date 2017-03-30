@@ -16,4 +16,5 @@ type SomeScalar a =
   , Epsilon a
   , Show a
   , VertexComponent a
+  , VertexAttribComponent a
   )

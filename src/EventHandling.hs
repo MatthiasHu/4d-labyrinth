@@ -9,8 +9,8 @@ module EventHandling
 import SDL
 import Graphics.Rendering.OpenGL (GLfloat)
 import Control.Lens
-import Data.Int (Int32)
 import Data.Monoid
+import Data.Int
 import Data.Word
 
 import SceneTO
@@ -22,8 +22,8 @@ import Shaders
 data State = State
   { _window :: Window
   , _shaderLocs :: ShaderLocations
-  , _scene :: SceneTO GLfloat
-  , _eye :: Transformation GLfloat
+  , _scene :: SceneTO V3 GLfloat
+  , _eye :: Transformation V3 GLfloat
   , _lastTick :: Word32
   }
 

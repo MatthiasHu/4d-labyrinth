@@ -14,7 +14,7 @@ import Transformation
 import EventHandling
 import CollisionObject
 import SceneTO
-import Interval
+import Geometry.Interval
 
 
 movementInput :: GLfloat -> Bool -> Bool -> State -> State
