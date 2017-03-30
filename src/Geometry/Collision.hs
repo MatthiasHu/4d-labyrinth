@@ -4,29 +4,31 @@ module Geometry.Collision
 
 import Linear
 import Linear.Affine
-import Data.Foldable
+import Control.Lens
 import Control.Monad
+import Data.Foldable
 
 import Geometry.Interval
 import Geometry.Ray
+import Geometry.Hyperplane
 
 
-type Inequality f a = (f a, a)
-
-
+-- Interval of collision of a ray with a polytope given by Hyperplanes.
 collisionInterval :: (Metric v, Foldable t, Ord a, Fractional a) =>
-  Ray v a -> Interval a -> t (Inequality v a) -> Maybe (Interval a)
+  Ray v a -> Interval a -> t (Hyperplane v a) -> Maybe (Interval a)
 collisionInterval ray = foldM go
   where
-    go oldInterval inequality = do
-      newInterval <- fulfillingInterval ray inequality
+    go oldInterval plane = do
+      newInterval <- behindInterval ray plane
       intersect newInterval oldInterval
 
-fulfillingInterval :: (Metric v, Ord a, Fractional a) =>
-  Ray v a -> Inequality v a -> Maybe (Interval a)
-fulfillingInterval (P p, v) (n, a)
+behindInterval :: (Metric v, Ord a, Fractional a) =>
+  Ray v a -> Hyperplane v a -> Maybe (Interval a)
+behindInterval (P p, v) plane
   | d >= 0     = upTo t0
   | otherwise  = fromOn t0
   where
+    n = plane ^. planeNormal
+    a = plane ^. planeValue
     d = v `dot` n
     t0 = (a - (p `dot` n)) / d

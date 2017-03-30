@@ -13,6 +13,7 @@ import Constraints.Scalar
 import Geometry.Ray
 import Geometry.Interval
 import Geometry.Collision
+import Geometry.Hyperplane
 import Object
 import SceneTO
 
@@ -36,8 +37,6 @@ collisionTimeScene margin ray scope scene =
 collisionIntervalObject :: (SomeVector v, Ord a, Fractional a) =>
   a -> Ray v a -> Interval a -> Object v a -> Maybe (Interval a)
 collisionIntervalObject margin ray scope =
-  collisionInterval ray scope
-  . map strengthenInequality
-  . boundingInequalities
-  where
-    strengthenInequality = _2 +~ margin
+    collisionInterval ray scope
+  . map (movePlane margin)
+  . view (partsOf (objectFaces . each . facePlane))

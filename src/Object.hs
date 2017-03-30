@@ -7,8 +7,7 @@ module Object
   ( Object(..)
   , objectCenter, objectRadius, objectFaces
   , Face(..)
-  , faceColor, faceVertices, faceNormal, faceDistance
-  , boundingInequalities
+  , faceColor, facePlane
   , inReach
   ) where
 
@@ -18,6 +17,7 @@ import Control.Lens hiding (transform)
 
 import Constraints.Scalar
 import Constraints.Vector
+import Geometry.Hyperplane
 import Color
 import Transformation
 
@@ -33,9 +33,7 @@ data Object v a = Object
 -- A face of an object.
 data Face v a = Face
   { _faceColor :: Color
-  , _faceVertices :: [Point v a]
-  , _faceNormal :: v a
-  , _faceDistance :: a
+  , _facePlane :: Hyperplane v a
   }
   deriving (Functor, Show)
 
@@ -43,20 +41,12 @@ makeLenses ''Object
 makeLenses ''Face
 
 instance (SomeVector v) => Transformable v (Face v) where
-  transform t f = f &
-      (faceVertices . each %~ transform t)
-    . (faceNormal %~ transform t)
-    . (faceDistance +~ translationPart t `dot`
-                       transform t (f ^. faceNormal))
+  transform = over facePlane . transform
 
 instance (SomeVector v) => Transformable v (Object v) where
   transform t =
       (objectFaces . each %~ transform t)
     . (objectCenter %~ transform t)
-
-boundingInequalities :: Object v a -> [(v a, a)]
-boundingInequalities =
-  map (\f -> (f ^. faceNormal, f ^. faceDistance)) . view objectFaces
 
 inReach :: (SomeVector v, SomeScalar a) =>
   Point v a -> a -> Object v a -> Bool
