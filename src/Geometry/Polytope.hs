@@ -1,4 +1,4 @@
-module Polytope
+module Geometry.Polytope
   ( Polytope
   , faceVertices
   ) where
@@ -12,37 +12,28 @@ import Data.Maybe
 
 import Constraints.Scalar
 import Geometry.Hyperplane
+import Geometry.Combinatorics
 
 
 -- A convex polytope given as intersetion of half spaces.
 type Polytope v a = [Hyperplane v a]
 
 faceVertices :: (SomeScalar a) => Polytope V3 a -> [[V3 a]]
-faceVertices planes = undefined
+faceVertices planes =
+  [ map ((vertsMap Map.!) . putIn p) $ sortPairs (vertsContaining p)
+  | p <- faceIDs ]
   where
     facesArr = arrayFromList planes
+    faceIDs = indices facesArr
     verts = filter (realVertex facesArr)
           . mapMaybe (mkVertex (facesArr!))
           . triples
-          $ indices facesArr
+          $ faceIDs
+    vertsMap = Map.fromList verts
+    vertsContaining p = mapMaybe (takeOut p . fst) verts
 
 arrayFromList :: [a] -> Array Int a
 arrayFromList l = array (1, length l) $ zip [1..] l
-
-type Triple a = [a]
-type Pair a = [a]
-
-triples :: [a] -> [Triple a]
-triples [] = []
-triples (x:xs) = map (x:) (pairs xs) ++ triples xs
-
-pairs :: [a] -> [Pair a]
-pairs [] = []
-pairs (x:xs) = map (\y -> [x, y]) xs ++ pairs xs
-
-toV3 :: Triple a -> V3 a
-toV3 [a, b, c] = V3 a b c
-toV3 _ = error "toV3: list is not a triple"
 
 type Vertex a = (Triple Int, V3 a)
 
@@ -51,10 +42,10 @@ mkVertex :: (SomeScalar a) =>
 mkVertex faces is = if nearZero det then Nothing
   else Just (is, mat' !* vals)
   where
-    mat = toV3 . map (view planeNormal . faces) $ is
+    mat = toV3 . fmap (view planeNormal . faces) $ is
     mat' = inv33 mat
     det = det33 mat
-    vals = toV3 . map (view planeValue . faces) $ is
+    vals = toV3 . fmap (view planeValue . faces) $ is
 
 realVertex :: (SomeScalar a) =>
   Array Int (Hyperplane V3 a) -> Vertex a -> Bool
