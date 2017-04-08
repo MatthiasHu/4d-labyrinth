@@ -1,10 +1,10 @@
 module Worlds
   ( randomScene
   , randomTunnel
-  , randomPeaks
+--  , randomPeaks
   ) where
 
 
 import Worlds.RandomScene
 import Worlds.RandomTunnel
-import Worlds.RandomPeaks
+--import Worlds.RandomPeaks

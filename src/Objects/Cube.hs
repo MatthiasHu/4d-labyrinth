@@ -8,25 +8,18 @@ import Control.Lens
 
 import Object
 import Color
+import Geometry.Hyperplane
 
 
 cube :: (Floating a) => Color -> Object V3 a
 cube c = Object zero (sqrt 3 * radius) $
-  map (($ radius) . uncurry (Face c)) cubeFaces
+  map (Face c) cubeFaces
 
-cubeFaces :: (Floating a) => [([Point V3 a], V3 a)]
+cubeFaces :: (Floating a) => [Hyperplane V3 a]
 cubeFaces = do
-  (a, b, c) <- [(_x, _y, _z), (_y, _z, _x), (_z, _x, _y)]
+  a <- [_x, _y, _z]
   sign <- [-1, 1]
-  let p = pure sign
-      normal = zero & c .~ sign
-      vertices = map (^* radius) $
-        [ p
-        , p & a %~ negate
-        , p & a %~ negate & b %~ negate
-        , p & b %~ negate
-        ]
-  return (vertices, normal)
+  return $ Hyperplane (zero & a .~ sign) radius
 
 radius :: (Fractional a) => a
 radius = 0.5
