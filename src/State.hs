@@ -6,6 +6,7 @@ module State
   , shaderLocs
   , scene
   , eye
+  , rotationMethod
   , lastTick
   ) where
 
@@ -17,13 +18,16 @@ import Data.Word
 import Shaders
 import SceneTO
 import Transformation
+import RotationMethods
+import Constraints.Vector
 
 
-data State = State
+data State v = State
   { _window :: Window
   , _shaderLocs :: ShaderLocations
-  , _scene :: SceneTO V3 GLfloat
-  , _eye :: Transformation V3 GLfloat
+  , _scene :: SceneTO v GLfloat
+  , _eye :: Transformation v GLfloat
+  , _rotationMethod :: RotationMethod v GLfloat
   , _lastTick :: Word32
   }
 

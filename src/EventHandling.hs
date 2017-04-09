@@ -10,9 +10,11 @@ import Data.Int
 import State
 import Transformation
 import Setup
+import Constraints.Vector
 
 
-handleEvent :: EventPayload -> State -> IO State
+handleEvent :: (SomeVector v) =>
+  EventPayload -> State v -> IO (State v)
 handleEvent (WindowClosedEvent _) = const quitAndExit
 handleEvent (KeyboardEvent (KeyboardEventData _ Pressed _ keysym)) =
   handleKeyPressed keysym
@@ -22,18 +24,19 @@ handleEvent (WindowSizeChangedEvent _) =
   handleWindowSizeChanged
 handleEvent _ = return
 
-handleKeyPressed :: Keysym -> State -> IO State
+handleKeyPressed :: Keysym -> State v -> IO (State v)
 handleKeyPressed (Keysym _ KeycodeEscape _) _ = quitAndExit
 handleKeyPressed _ s = return s
 
-handleMouseMotion :: V2 Int32 -> State -> IO State
-handleMouseMotion (V2 dx dy) = return . over eye
-  ((   rotation _xz (fromIntegral (-dx) * sensitivity)
-    <> rotation _yz (fromIntegral dy    * sensitivity) ) <>)
+handleMouseMotion :: (SomeVector v) =>
+  V2 Int32 -> State v -> IO (State v)
+handleMouseMotion (V2 dx dy) s = return $ s & over eye
+  ((s ^. rotationMethod) ( fromIntegral dx    * sensitivity
+                         , fromIntegral (-dy) * sensitivity ) <>)
   where
     sensitivity = 0.005
 
-handleWindowSizeChanged :: State -> IO State
+handleWindowSizeChanged :: State v -> IO (State v)
 handleWindowSizeChanged s = do
   setViewport (s ^. window)
   return s
