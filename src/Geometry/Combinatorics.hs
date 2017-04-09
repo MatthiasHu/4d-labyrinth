@@ -28,6 +28,14 @@ choose n (x:xs) =
      map (over _1 (x:)) (choose (n-1) xs)
   ++ map (over _2 (x:)) (choose n     xs)
 
+-- choose' n l = map fst $ choose n l
+-- but this is more efficient:
+choose' :: Int -> [a] -> [[a]]
+choose' 0 xs = [[]]
+choose' n [] = []
+choose' n (x:xs) = map (x:) (choose' (n-1) xs)
+                   ++ choose' n xs
+
 
 newtype Triple a = Triple { unTriple :: [a] }
   deriving (Show, Eq, Ord, Functor, Foldable)
@@ -36,10 +44,10 @@ newtype Pair a   = Pair   { unPair   :: [a] }
   deriving (Show, Eq, Ord, Functor, Foldable)
 
 triples :: [a] -> [Triple a]
-triples = map (Triple . fst) . choose 3
+triples = map Triple . choose' 3
 
 pairs :: [a] -> [Pair a]
-pairs = map (Pair . fst) . choose 2
+pairs = map Pair . choose' 2
 
 toV3 :: Triple a -> V3 a
 toV3 (Triple [a, b, c]) = V3 a b c
