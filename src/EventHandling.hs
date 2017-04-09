@@ -1,33 +1,15 @@
-{-# LANGUAGE TemplateHaskell #-}
-
 module EventHandling
-  ( State(..)
-  , window, shaderLocs, scene, eye, lastTick
-  , handleEvent
+  ( handleEvent
   ) where
 
 import SDL
-import Graphics.Rendering.OpenGL (GLfloat)
 import Control.Lens
 import Data.Monoid
 import Data.Int
-import Data.Word
 
-import SceneTO
+import State
 import Transformation
 import Setup
-import Shaders
-
-
-data State = State
-  { _window :: Window
-  , _shaderLocs :: ShaderLocations
-  , _scene :: SceneTO V3 GLfloat
-  , _eye :: Transformation V3 GLfloat
-  , _lastTick :: Word32
-  }
-
-makeLenses ''State
 
 
 handleEvent :: EventPayload -> State -> IO State

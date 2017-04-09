@@ -10,8 +10,8 @@ import Control.Lens hiding (transform)
 import Data.Monoid
 import Data.Maybe (fromMaybe)
 
+import State
 import Transformation
-import EventHandling
 import CollisionObject
 import SceneTO
 import Geometry.Interval
