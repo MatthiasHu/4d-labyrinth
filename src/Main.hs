@@ -19,7 +19,7 @@ import Constraints.Vector
 main :: IO ()
 main = do
   let world = randomTunnel 5
-      rotationMethod = rot3d
+      rotationMethod = rot4dpartial
   (window, shaderLocs) <- setup
   (scene, eye) <- world
   startTime <- ticks
