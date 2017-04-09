@@ -9,13 +9,21 @@ import SceneTO
 import Objects.Cube
 import Transformation
 import Color
+import Constraints.Vector
 
 
-randomColorBox :: (MonadRandom m, Floating a) =>
-  Int -> (V3 Int -> Bool) -> m (SceneTO V3 a)
+randomColorBox :: (MonadRandom m, SomeVector v, Floating a) =>
+  Int -> (v Int -> Bool) -> m (SceneTO v a)
 randomColorBox n p = fmap SceneFork $ sequence
-  [ makeCube (V3 x y z) <$> randomColor
-  | x <- [0..n], y <- [0..n], z <- [0..n], p (V3 x y z) ]
+  [ makeCube pos <$> randomColor
+  | pos <- linearCombinations [0..n] basis, p pos ]
   where
     makeCube v c = Transformed (translation $ fmap fromIntegral v)
       . SceneObject $ cube c
+
+linearCombinations :: (Additive v, Num a) => [a] -> [v a] -> [v a]
+linearCombinations factors (v:vs) = do
+  i <- factors
+  vs' <- linearCombinations factors vs
+  return (i*^v ^+^ vs')
+linearCombinations factors [] = [zero]

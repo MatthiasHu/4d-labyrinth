@@ -41,7 +41,7 @@ class Transformable v f where
   transform :: (Num a) => Transformation v a -> f a -> f a
 
 -- Apply the trnsformation to a point.
-instance (SomeVector v) =>
+instance (Foldable v, Additive v) =>
   Transformable v (Point v) where
   transform (Transformation rot trans) (P p) = (P (rot !* p) .+^ trans)
 
@@ -49,7 +49,7 @@ instance (SomeVector v) =>
 -- This is appropriate when the vector does not represent
 -- a point in space, but rather a direction (with length),
 -- like normal vectors do.
-instance (SomeVector v) =>
+instance (Foldable v, Additive v) =>
   Transformable v v where
   transform (Transformation rot _) v = rot !* v
 

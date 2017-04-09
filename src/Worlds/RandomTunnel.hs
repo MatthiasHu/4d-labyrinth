@@ -17,15 +17,16 @@ import Objects.Octahedron
 import Color
 
 
-randomTunnel :: (MonadRandom m, SomeScalar a) =>
-  Int -> m (SceneTO V3 a, Transformation V3 a)
+randomTunnel :: (SomeVector v, MonadRandom m, SomeScalar a) =>
+  Int -> m (SceneTO v a, Transformation v a)
 randomTunnel n = do
   path <- randomPath (pure (n-1)) (pure 1)
   tunnelBox <- randomColorBox n (`Set.notMember` (Set.fromList path))
-  let crystal = Transformed
+  let {-crystal = Transformed
         (translation . pure . fromIntegral $ (n-1))
         (SceneObject $ octahedron 0.3 white)
-      scene = SceneFork [tunnelBox, crystal]
+      scene = SceneFork [tunnelBox, crystal]-}
+      scene = tunnelBox
   return (scene, translation (pure (-1)))
 
 -- A random monotonous path connecting two points.

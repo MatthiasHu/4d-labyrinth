@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Objects.Cube
   ( cube
   ) where
@@ -9,17 +11,21 @@ import Control.Lens
 import Object
 import Color
 import Geometry.Hyperplane
+import Constraints.Vector
 
 
-cube :: (Floating a) => Color -> Object V3 a
-cube c = Object zero (sqrt 3 * radius) $
+cube :: forall v a. (SomeVector v, Floating a) =>
+  Color -> Object v a
+cube c = Object zero (sqrt dim * radius) $
   map (Face c) cubeFaces
+  where
+    dim = sum (pure 1 :: v a)
 
-cubeFaces :: (Floating a) => [Hyperplane V3 a]
+cubeFaces :: (SomeVector v, Floating a) => [Hyperplane v a]
 cubeFaces = do
-  a <- [_x, _y, _z]
+  v <- basis
   sign <- [-1, 1]
-  return $ Hyperplane (zero & a .~ sign) radius
+  return $ Hyperplane (sign *^ v) radius
 
 radius :: (Fractional a) => a
 radius = 0.5

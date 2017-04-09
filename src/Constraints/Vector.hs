@@ -14,4 +14,5 @@ type SomeVector v =
   , Traversable v
   , Metric v
   , Representable v
+  , Ord (v Int)
   )
