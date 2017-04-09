@@ -38,7 +38,7 @@ renderFace locs f verts = do
     normal' (V3 x y z) =
       vertexAttrib ToFloat (locs ^. aNormal) (Vector3 x y z)
 
-renderScene :: (SomeVector v, SomeScalar a) =>
+renderScene :: (SomeVector v, R3 v, SomeScalar a) =>
   ShaderLocations -> SceneTO v a -> IO ()
 renderScene locs =
     mapM_ (renderObject locs)

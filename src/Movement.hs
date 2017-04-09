@@ -18,7 +18,7 @@ import Geometry.Interval
 import Constraints.Vector
 
 
-movementInput :: (SomeVector v) =>
+movementInput :: (SomeVector v, R3 v) =>
   GLfloat -> Bool -> Bool -> State v -> State v
 movementInput speed forward backward = movement $
   (zero & _z .~ (-1)) ^* (speed * (val forward - val backward))

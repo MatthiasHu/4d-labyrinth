@@ -1,3 +1,5 @@
+{-# LANGUAGE Rank2Types #-}
+
 module Worlds.RandomPeaks
   ( randomPeaks
   ) where
@@ -5,36 +7,40 @@ module Worlds.RandomPeaks
 import Control.Monad.Random
 import qualified Data.Map as Map
 import Linear hiding (translation)
+import Control.Lens
 
 import Constraints.Scalar
 import Worlds.RandomColorBox
 import Transformation
 import SceneTO
-import Objects.Tree
+import Constraints.Vector
+--import Objects.Tree
 
 
-randomPeaks :: (MonadRandom m, SomeScalar a) =>
-  Int -> m (SceneTO V3 a, Transformation V3 a)
-randomPeaks n = do
+randomPeaks ::
+  (MonadRandom m, SomeVector v, SomeVector v', SomeScalar a) =>
+  (forall b. Lens' (v b) (v' b)) -> (forall b. Lens' (v b) b)
+  -> Int -> m (SceneTO v a, Transformation v a)
+randomPeaks horizontal vertical n = do
   heights <- randomHeightMap n
   boxes <- randomColorBox n $
-    \(V3 x y z) -> (heights Map.! (x, y)) >= z
-  let
+    \pos -> (heights Map.! (pos^.horizontal)) >= (pos^.vertical)
+{-  let
     translated x y z =
       Transformed . translation . (^+^ V3 0 0 0.5) . fmap fromIntegral
         $ V3 x y z
     trees = SceneFork
       [ translated x y (heights Map.! (x, y)) tree
-      | (x, y) <- peaks n heights ]
-  return ( SceneFork [boxes, trees]
-         , translation (V3 0 0 (fromIntegral (-n-1))) )
+      | (x, y) <- peaks n heights ]-}
+  return ( boxes --SceneFork [boxes, trees]
+         , translation (zero & vertical .~ fromIntegral (-n-1)) )
 
-randomHeightMap :: (MonadRandom m) =>
-  Int -> m (Map.Map (Int, Int) Int)
+randomHeightMap :: (MonadRandom m, SomeVector v) =>
+  Int -> m (Map.Map (v Int) Int)
 randomHeightMap n = Map.fromList <$>
-  forM xys (\xy -> (,) xy <$> randomHeight n)
+  forM xs (\x -> (,) x <$> randomHeight n)
   where
-    xys = [ (x, y) | x <- [0..n], y <- [0..n] ]
+    xs = sequenceA (pure [0..n])
 
 randomHeight :: (MonadRandom m) => Int -> m Int
 randomHeight n = weighted

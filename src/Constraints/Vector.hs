@@ -15,5 +15,4 @@ type SomeVector v =
   , Metric v
   , Representable v
   , Ord (v Int)
-  , R3 v
   )
