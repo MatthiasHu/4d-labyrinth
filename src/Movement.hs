@@ -15,16 +15,18 @@ import Transformation
 import CollisionObject
 import SceneTO
 import Geometry.Interval
+import Constraints.Vector
 
 
-movementInput :: GLfloat -> Bool -> Bool -> State -> State
+movementInput :: (SomeVector v) =>
+  GLfloat -> Bool -> Bool -> State v -> State v
 movementInput speed forward backward = movement $
-  V3 0 0 (-1) ^* speed * (val forward - val backward)
+  (zero & _z .~ (-1)) ^* (speed * (val forward - val backward))
   where
     val True = 1
     val False = 0
 
-movement :: V3 GLfloat -> State -> State
+movement :: (SomeVector v) => v GLfloat -> State v -> State v
 movement v0_eye s = s & eye %~ (<> translation ((-1) * t *^ v0))
   where
     invEye = invert (s ^. eye)

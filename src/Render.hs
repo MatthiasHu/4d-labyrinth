@@ -4,9 +4,10 @@ module Render
   ) where
 
 import Graphics.Rendering.OpenGL hiding (Face)
-import Control.Lens hiding (transform)
 import Linear
 import Linear.Affine
+import Control.Lens hiding (transform)
+import Data.Maybe
 
 import Constraints.Scalar
 import Object
@@ -16,6 +17,7 @@ import Shaders
 import Geometry.Polytope
 import Geometry.Hyperplane
 import Geometry.Combinatorics
+import Constraints.Vector
 
 
 renderObject :: (SomeScalar a) =>
@@ -36,6 +38,9 @@ renderFace locs f verts = do
     normal' (V3 x y z) =
       vertexAttrib ToFloat (locs ^. aNormal) (Vector3 x y z)
 
-renderScene :: (SomeScalar a) =>
-  ShaderLocations -> SceneTO V3 a -> IO ()
-renderScene locs = mapM_ (renderObject locs) . transformedSceneObjects
+renderScene :: (SomeVector v, SomeScalar a) =>
+  ShaderLocations -> SceneTO v a -> IO ()
+renderScene locs =
+    mapM_ (renderObject locs)
+  . mapMaybe (intersectObject _xyz)
+  . transformedSceneObjects

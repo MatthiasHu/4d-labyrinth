@@ -8,32 +8,35 @@ import Control.Lens
 import Setup
 import State
 import Worlds
+import RotationMethods
 import Scene
 import EventHandling
 import Render
 import Movement
+import Constraints.Vector
 
 
 main :: IO ()
 main = do
+  let world = randomTunnel 5
+      rotationMethod = rot3d
   (window, shaderLocs) <- setup
-  (scene, eye) <- randomTunnel 5
+  (scene, eye) <- world
   startTime <- ticks
-  let state = State window shaderLocs scene eye startTime
-  mainLoop state
+  mainLoop $ State window shaderLocs scene eye rotationMethod startTime
 
-mainLoop :: State -> IO ()
+mainLoop :: (SomeVector v) => State v -> IO ()
 mainLoop s = do
   mE <- pollEvent
   case mE of
     Just e -> mainLoopEvent e s
     Nothing -> render s >> mainLoopIdle s
 
-mainLoopEvent :: Event -> State -> IO ()
+mainLoopEvent :: (SomeVector v) => Event -> State v -> IO ()
 mainLoopEvent (Event _ payload) =
   handleEvent payload >=> mainLoop
 
-mainLoopIdle :: State -> IO ()
+mainLoopIdle :: (SomeVector v) => State v -> IO ()
 mainLoopIdle s = do
   t <- ticks
   if t >= nextTick
@@ -49,7 +52,7 @@ mainLoopIdle s = do
 tickInterval :: (Num a) => a
 tickInterval = 30
 
-tick :: State -> IO State
+tick :: (SomeVector v) => State v -> IO (State v)
 tick s0 = do
   let s = over lastTick (+tickInterval) s0
   keydown <- getKeyboardState
@@ -58,7 +61,7 @@ tick s0 = do
   where
     speed = 0.10
 
-render :: State -> IO ()
+render :: (SomeVector v) => State v -> IO ()
 render s = do
   GL.clear [GL.ColorBuffer, GL.DepthBuffer]
   renderScene (s ^. shaderLocs) $ Transformed (s ^. eye) (s ^. scene)

@@ -1,5 +1,6 @@
 module RotationMethods
   ( RotationMethod
+  , rot3d
   ) where
 
 import Linear
@@ -13,5 +14,5 @@ type RotationMethod v a = (a, a) -> Transformation v a
 
 rot3d :: (Floating a) => RotationMethod V3 a
 rot3d (dx, dy) =
-     rotation _xz dx
-  <> rotation _yz dy
+     rotation _zx dx
+  <> rotation _zy dy
