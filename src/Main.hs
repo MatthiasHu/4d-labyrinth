@@ -18,7 +18,7 @@ import Constraints.Vector
 
 main :: IO ()
 main = do
-  let world = randomPeaks _xyz _w 5
+  let world = gridWorld 4 3
       rotationMethod = rot4dQuaternion
   (window, shaderLocs) <- setup
   (scene, eye) <- world
