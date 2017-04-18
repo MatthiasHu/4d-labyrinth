@@ -1,7 +1,8 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module State
-  ( State(..)
+  ( Scalar
+  , State(..)
   , window
   , shaderLocs
   , scene
@@ -22,12 +23,14 @@ import RotationMethods
 import Constraints.Vector
 
 
+type Scalar = GLfloat
+
 data State v = State
   { _window :: Window
   , _shaderLocs :: ShaderLocations
-  , _scene :: SceneTO v GLfloat
-  , _eye :: Transformation v GLfloat
-  , _rotationMethod :: RotationMethod v GLfloat
+  , _scene :: SceneTO v Scalar
+  , _eye :: Transformation v Scalar
+  , _rotationMethod :: RotationMethod v Scalar
   , _lastTick :: Word32
   }
 

@@ -8,6 +8,7 @@ import Data.Monoid
 import Data.Int
 
 import State
+import RotationMethods
 import Transformation
 import Setup
 import Constraints.Vector
@@ -20,6 +21,8 @@ handleEvent (KeyboardEvent (KeyboardEventData _ Pressed _ keysym)) =
   handleKeyPressed keysym
 handleEvent (MouseMotionEvent (MouseMotionEventData _ _ _ _ d)) =
   handleMouseMotion d
+handleEvent (MouseWheelEvent (MouseWheelEventData _ _ d _)) =
+  handleMouseWheel d
 handleEvent (WindowSizeChangedEvent _) =
   handleWindowSizeChanged
 handleEvent _ = return
@@ -30,11 +33,25 @@ handleKeyPressed _ s = return s
 
 handleMouseMotion :: (SomeVector v) =>
   V2 Int32 -> State v -> IO (State v)
-handleMouseMotion (V2 dx dy) s = return $ s & over eye
-  ((s ^. rotationMethod) ( fromIntegral dx    * sensitivity
-                         , fromIntegral (-dy) * sensitivity ) <>)
+handleMouseMotion (V2 dx dy) = return . rotationInput
+  ( fromIntegral dx    * sensitivity
+  , fromIntegral (-dy) * sensitivity
+  , 0
+  )
   where
     sensitivity = 0.005
+
+handleMouseWheel :: (SomeVector v) =>
+  V2 Int32 -> State v -> IO (State v)
+handleMouseWheel (V2 _ dy) = return . rotationInput
+  (0, 0, fromIntegral dy * sensitivity)
+  where
+    sensitivity = 0.05
+
+rotationInput :: (SomeVector v) =>
+  RotationInput Scalar -> State v -> State v
+rotationInput input s = s & over eye
+  ((s ^. rotationMethod) input <>)
 
 handleWindowSizeChanged :: State v -> IO (State v)
 handleWindowSizeChanged s = do

@@ -3,7 +3,6 @@ module Movement
   , movement
   ) where
 
-import Graphics.Rendering.OpenGL (GLfloat)
 import Linear hiding (translation)
 import Linear.Affine
 import Control.Lens hiding (transform)
@@ -19,14 +18,14 @@ import Constraints.Vector
 
 
 movementInput :: (SomeVector v, R3 v) =>
-  GLfloat -> Bool -> Bool -> State v -> State v
+  Scalar -> Bool -> Bool -> State v -> State v
 movementInput speed forward backward = movement $
   (zero & _z .~ (-1)) ^* (speed * (val forward - val backward))
   where
     val True = 1
     val False = 0
 
-movement :: (SomeVector v) => v GLfloat -> State v -> State v
+movement :: (SomeVector v) => v Scalar -> State v -> State v
 movement v0_eye s = s & eye %~ (<> translation ((-1) * t *^ v0))
   where
     invEye = invert (s ^. eye)
