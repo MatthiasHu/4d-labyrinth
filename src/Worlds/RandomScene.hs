@@ -15,5 +15,5 @@ randomScene :: (Monad m, Floating a) =>
 randomScene = return (scene, eye)
   where
     scene = Transformed (translation $ V3 1 0 (-4))
-      $ SceneObject (cube red)
+      $ SceneObject (cube 1.0 red)
     eye = mempty

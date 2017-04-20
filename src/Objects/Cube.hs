@@ -15,17 +15,14 @@ import Constraints.Vector
 
 
 cube :: forall v a. (SomeVector v, Floating a) =>
-  Color -> Object v a
-cube c = Object zero (sqrt dim * radius) $
-  map (Face c) cubeFaces
+  a -> Color -> Object v a
+cube radius c = Object zero (sqrt dim * radius) $
+  map (Face c) (cubeFaces radius)
   where
     dim = sum (pure 1 :: v a)
 
-cubeFaces :: (SomeVector v, Floating a) => [Hyperplane v a]
-cubeFaces = do
+cubeFaces :: (SomeVector v, Floating a) => a -> [Hyperplane v a]
+cubeFaces radius = do
   v <- basis
   sign <- [-1, 1]
   return $ Hyperplane (sign *^ v) radius
-
-radius :: (Fractional a) => a
-radius = 0.5

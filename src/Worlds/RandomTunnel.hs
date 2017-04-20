@@ -13,7 +13,7 @@ import Constraints.Vector
 import Worlds.RandomColorBox
 import Transformation
 import SceneTO
-import Objects.Octahedron
+import Objects.Cube
 import Color
 
 
@@ -24,11 +24,10 @@ randomTunnel n = do
   let pathSet = Set.fromList path
       walls = foldMap neighbours pathSet Set.\\ pathSet
   tunnelBox <- randomColorBox n (`Set.member` walls)
-  let {-crystal = Transformed
+  let gem = Transformed
         (translation . pure . fromIntegral $ (n-1))
-        (SceneObject $ octahedron 0.3 white)
-      scene = SceneFork [tunnelBox, crystal]-}
-      scene = tunnelBox
+        (SceneObject $ cube 0.2 white)
+      scene = SceneFork [tunnelBox, gem]
   return (scene, translation (pure (-1)))
 
 neighbours :: (SomeVector v) => v Int -> Set.Set (v Int)

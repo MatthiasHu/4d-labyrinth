@@ -19,5 +19,5 @@ randomColorBox n p = fmap SceneFork $ sequence
   | pos <- positions, p pos ]
   where
     makeCube v c = Transformed (translation $ fmap fromIntegral v)
-      . SceneObject $ cube c
+      . SceneObject $ cube 0.5 c
     positions = sequenceA (pure [0..n])
