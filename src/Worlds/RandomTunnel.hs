@@ -21,13 +21,19 @@ randomTunnel :: (SomeVector v, MonadRandom m, SomeScalar a) =>
   Int -> m (SceneTO v a, Transformation v a)
 randomTunnel n = do
   path <- randomPath (pure (n-1)) (pure 1)
-  tunnelBox <- randomColorBox n (`Set.notMember` (Set.fromList path))
+  let pathSet = Set.fromList path
+      walls = foldMap neighbours pathSet Set.\\ pathSet
+  tunnelBox <- randomColorBox n (`Set.member` walls)
   let {-crystal = Transformed
         (translation . pure . fromIntegral $ (n-1))
         (SceneObject $ octahedron 0.3 white)
       scene = SceneFork [tunnelBox, crystal]-}
       scene = tunnelBox
   return (scene, translation (pure (-1)))
+
+neighbours :: (SomeVector v) => v Int -> Set.Set (v Int)
+neighbours v = Set.fromList
+  [ v ^+^ sign *^ e | e <- basis, sign <- [-1, 1] ]
 
 -- A random monotonous path connecting two points.
 randomPath :: forall v m.
