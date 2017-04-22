@@ -18,7 +18,7 @@ import Constraints.Vector
 
 main :: IO ()
 main = do
-  let world = screwWorld
+  let world = orthogonalPlanes 10
       rotationMethod = rot4dQuaternion
   (window, shaderLocs) <- setup
   (scene, eye) <- world
