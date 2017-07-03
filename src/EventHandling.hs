@@ -8,13 +8,15 @@ import Data.Monoid
 import Data.Int
 
 import State
+import Editing
 import RotationMethods
 import Transformation
 import Setup
+import Color
 import Constraints.Vector
 
 
-handleEvent :: (SomeVector v) =>
+handleEvent :: (SomeVector v, R3 v) =>
   EventPayload -> State v -> IO (State v)
 handleEvent (WindowClosedEvent _) = const quitAndExit
 handleEvent (KeyboardEvent (KeyboardEventData _ Pressed _ keysym)) =
@@ -23,6 +25,9 @@ handleEvent (MouseMotionEvent (MouseMotionEventData _ _ _ _ d)) =
   handleMouseMotion d
 handleEvent (MouseWheelEvent (MouseWheelEventData _ _ d _)) =
   handleMouseWheel d
+handleEvent (MouseButtonEvent
+  (MouseButtonEventData _ Pressed _ button _ _)) =
+  handleMouseButtonPressed button
 handleEvent (WindowSizeChangedEvent _) =
   handleWindowSizeChanged
 handleEvent _ = return
@@ -52,6 +57,13 @@ rotationInput :: (SomeVector v) =>
   RotationInput Scalar -> State v -> State v
 rotationInput input s = s & over eye
   ((s ^. rotationMethod) input <>)
+
+handleMouseButtonPressed :: (SomeVector v, R3 v) =>
+  MouseButton -> State v -> IO (State v)
+handleMouseButtonPressed ButtonRight = return . removeBlockHere
+handleMouseButtonPressed ButtonLeft = \s -> do
+  color <- randomColor
+  return (addBlockHere color s)
 
 handleWindowSizeChanged :: State v -> IO (State v)
 handleWindowSizeChanged s = do

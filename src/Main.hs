@@ -7,7 +7,7 @@ import Control.Lens
 
 import Setup
 import State
-import Worlds
+import Blockworld
 import RotationMethods
 import Scene
 import EventHandling
@@ -18,12 +18,14 @@ import Constraints.Vector
 
 main :: IO ()
 main = do
-  let world = orthogonalPlanes 10
-      rotationMethod = rot4dQuaternion
+  let rotationMethod = rot4dQuaternion
+      blockworld = emptyBlockworld
+      scene = blockworldScene blockworld
+      eye = mempty
   (window, shaderLocs) <- setup
-  (scene, eye) <- world
   startTime <- ticks
-  mainLoop $ State window shaderLocs scene eye rotationMethod startTime
+  mainLoop $ State
+    window shaderLocs scene blockworld eye rotationMethod startTime
 
 mainLoop :: (SomeVector v, R3 v) =>
   State v -> IO ()
