@@ -3,7 +3,6 @@ module Worlds.RandomColorBox
   ) where
 
 import Control.Monad.Random
-import Linear hiding (translation)
 
 import SceneTO
 import Objects.Cube

@@ -20,7 +20,6 @@ import Shaders
 import SceneTO
 import Transformation
 import RotationMethods
-import Constraints.Vector
 
 
 type Scalar = GLfloat
