@@ -1,8 +1,13 @@
 module SparseMatrix
   ( Matrix(rowsRep, colsRep)
   , nullMatrix
+  , transpose
   , getEntry
   , setEntry
+  , getRow
+  , getCol
+  , setRow
+  , setCol
   ) where
 
 import qualified Data.Map.Strict as M
