@@ -60,10 +60,17 @@ tick :: (SomeVector v, R3 v) =>
 tick s0 = do
   let s = over lastTick (+tickInterval) s0
   keydown <- getKeyboardState
-  return $ s
-    & movementInput speed (keydown ScancodeW) (keydown ScancodeS)
+  return $ s & (movementInput speed
+    $ map (uncurry compare . over both keydown) movementKeys)
   where
     speed = 0.10
+
+movementKeys =
+  [ (ScancodeD, ScancodeA)
+  , (ScancodeSpace, ScancodeLShift)
+  , (ScancodeS, ScancodeW)
+  , (ScancodeE, ScancodeQ)
+  ]
 
 render :: (SomeVector v, R3 v) => State v -> IO ()
 render s = do
