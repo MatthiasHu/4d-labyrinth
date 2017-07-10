@@ -6,6 +6,7 @@ module Movement
 import Linear hiding (translation)
 import Linear.Affine
 import Control.Lens hiding (transform)
+import qualified Control.Monad.State as MS
 import Data.Monoid
 import Data.Maybe (fromMaybe)
 
@@ -18,12 +19,20 @@ import Constraints.Vector
 
 
 movementInput :: (SomeVector v, R3 v) =>
-  Scalar -> Bool -> Bool -> State v -> State v
-movementInput speed forward backward = movement $
-  (zero & _z .~ (-1)) ^* (speed * (val forward - val backward))
+  Scalar -> [Ordering] -> State v -> State v
+movementInput speed inputs = movement $
+  fillVector (map val inputs ++ repeat 0) ^* speed
   where
-    val True = 1
-    val False = 0
+    val LT = -1
+    val EQ = 0
+    val GT = 1
+
+-- Fill a vector with values from a list,
+-- traversing the vector structure with a MS.State action.
+-- The list must be long enough.
+fillVector :: (SomeVector v) => [a] -> v a
+fillVector = MS.evalState . sequenceA . pure . MS.state $
+  \(x:xs) -> (x, xs)
 
 movement :: (SomeVector v) => v Scalar -> State v -> State v
 movement v0_eye s = s & eye %~ (<> translation ((-1) * t *^ v0))
