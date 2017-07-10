@@ -74,14 +74,15 @@ otherOne x (Pair [a, b])
   | otherwise = Nothing
 
 
--- sort a list of pairs forming a cycle:
+-- Sort a list of pairs forming a cycle:
 -- (a, b), (b, c), (c, d), ..., (z, a)
+-- Returns the empty list if the list does not represent such a cycle.
 sortPairs :: (Ord a) => [Pair a] -> [Pair a]
 sortPairs [] = []
-sortPairs (p@(Pair [a, b]) : rest) = p : go a (Set.fromList rest)
+sortPairs (p@(Pair [a, b]) : rest) =
+  fromMaybe [] $ (p:) <$> go a (Set.fromList rest)
   where
-    go x ps | x == b     = []
-            | otherwise  =
-      case find (isJust . otherOne x) ps of
-        Nothing -> error "sortPairs: cycle not closed"
-        Just p  -> p : go (fromJust $ otherOne x p) (Set.delete p ps)
+    go x ps | x == b     = Just []
+            | otherwise  = do
+      p <- find (isJust . otherOne x) ps
+      (p:) <$> go (fromJust $ otherOne x p) (Set.delete p ps)
