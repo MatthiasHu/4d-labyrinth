@@ -20,7 +20,7 @@ type Polytope v a = [Hyperplane v a]
 
 faceVertices :: (SomeScalar a) =>
   (face -> Hyperplane V3 a) -> [face] -> [(face, [Point V3 a])]
-faceVertices getHyperplane faces = filter (not . null)
+faceVertices getHyperplane faces = filter (not . null . snd)
   [ ( facesArr ! p
     , map ((vertsMap Map.!) . putIn p) $ sortPairs (vertsContaining p)
     )
