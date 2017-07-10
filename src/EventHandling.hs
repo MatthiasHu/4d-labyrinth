@@ -10,6 +10,8 @@ import Data.Int
 import State
 import Editing
 import RotationMethods
+import Blockworld
+import Homology
 import Transformation
 import Setup
 import Color
@@ -60,10 +62,15 @@ rotationInput input s = s & over eye
 
 handleMouseButtonPressed :: (SomeVector v, R3 v) =>
   MouseButton -> State v -> IO (State v)
-handleMouseButtonPressed ButtonRight = return . removeBlockHere
-handleMouseButtonPressed ButtonLeft = \s -> do
+handleMouseButtonPressed ButtonRight s = do
+  let s' = removeBlockHere s
+  putStrLn . homologyString . blockworldHomology $ s' ^. blockworld
+  return s'
+handleMouseButtonPressed ButtonLeft s = do
   color <- randomColor
-  return (addBlockHere color s)
+  let s' = addBlockHere color s
+  putStrLn . homologyString . blockworldHomology $ s' ^. blockworld
+  return s'
 
 handleWindowSizeChanged :: State v -> IO (State v)
 handleWindowSizeChanged s = do

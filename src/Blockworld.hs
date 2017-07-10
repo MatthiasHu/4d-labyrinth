@@ -4,12 +4,14 @@ module Blockworld
   , addBlock
   , removeBlock
   , blockworldScene
+  , blockworldHomology
   ) where
 
 import qualified Data.Map.Strict as Map
 
 import Objects.Cube
 import SceneTO
+import CubicalHomology
 import Transformation
 import Color
 import Constraints.Vector
@@ -37,3 +39,6 @@ blockworldScene world = SceneFork
   where
     makeCube v c = Transformed (translation $ fmap fromIntegral v)
       . SceneObject $ cube 0.5 c
+
+blockworldHomology :: (SomeVector v) => Blockworld v -> Homology
+blockworldHomology = cubicalHomology . Map.keys

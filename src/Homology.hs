@@ -1,11 +1,13 @@
 module Homology
   ( ChainComplex(..)
+  , Homology
   , homology
+  , homologyString
   ) where
 
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
-import Data.List (group)
+import Data.List (group, intercalate)
 
 import SparseMatrix
 import SmithNormalForm
@@ -70,6 +72,10 @@ mkMatrix js f = fromEntries
 data PrimitiveGroupType = ZZ | ZZmod Integer
   deriving (Eq, Ord, Show)
 
+pgtString :: PrimitiveGroupType -> String
+pgtString ZZ = "Z"
+pgtString (ZZmod n) = "Z"++show n
+
 type GroupType = M.Map PrimitiveGroupType Integer
 
 cyclicGroup :: Integer -> GroupType
@@ -86,3 +92,13 @@ primeFactors n = p : primeFactors (n `div` p)
     p = head . filter ((==0) . (n `mod`)) $ [2..]
 
 type Homology = [GroupType]
+
+homologyString :: Homology -> String
+homologyString = intercalate "-" . map groupTypeString
+
+groupTypeString :: GroupType -> String
+groupTypeString gt = if M.null gt then "0" else
+    intercalate "+"
+  . map (\(pgt, n) -> intercalate "+" . replicate (fromIntegral n)
+                        $ pgtString pgt)
+  $ M.assocs gt

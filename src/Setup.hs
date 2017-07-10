@@ -24,7 +24,8 @@ setup = do
 windowConfig :: WindowConfig
 windowConfig = defaultWindow
   { windowOpenGL = Just defaultOpenGL
-  , windowMode = FullscreenDesktop
+--  , windowMode = FullscreenDesktop
+  , windowInitialSize = V2 1000 800
   }
 
 setupGL :: Window -> IO ShaderLocations
