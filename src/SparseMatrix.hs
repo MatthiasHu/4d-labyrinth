@@ -8,6 +8,7 @@ module SparseMatrix
   , getCol
   , setRow
   , setCol
+  , fromEntries
   ) where
 
 import qualified Data.Map.Strict as M
@@ -71,3 +72,7 @@ setRow i r m = foldl' (\m' j -> setEntry (i, j) (fwd 0 j r) m') m
 setCol :: (Ord i, Ord j, Num a, Eq a) =>
   j -> M.Map i a -> Matrix i j a -> Matrix i j a
 setCol j c = transpose . setRow j c . transpose
+
+fromEntries :: (Ord i, Ord j, Eq a, Num a) =>
+  [((i, j), a)] -> Matrix i j a
+fromEntries = foldl' (flip $ uncurry setEntry) nullMatrix
