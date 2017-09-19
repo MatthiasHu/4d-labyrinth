@@ -34,8 +34,10 @@ handleEvent (WindowSizeChangedEvent _) =
   handleWindowSizeChanged
 handleEvent _ = return
 
-handleKeyPressed :: Keysym -> State v -> IO (State v)
+handleKeyPressed :: (SomeVector v) => Keysym -> State v -> IO (State v)
 handleKeyPressed (Keysym _ KeycodeEscape _) _ = quitAndExit
+handleKeyPressed (Keysym _ KeycodeH _) s = printHomology s >> return s
+handleKeyPressed (Keysym _ KeycodeJ _) s = printHomologies s >> return s
 handleKeyPressed _ s = return s
 
 handleMouseMotion :: (SomeVector v) =>
@@ -64,17 +66,20 @@ handleMouseButtonPressed :: (SomeVector v, R3 v) =>
   MouseButton -> State v -> IO (State v)
 handleMouseButtonPressed ButtonRight s = do
   let s' = removeBlockHere s
-  printHomology s'
   return s'
 handleMouseButtonPressed ButtonLeft s = do
   color <- randomColor
   let s' = addBlockHere color s
-  printHomology s'
   return s'
 
 printHomology :: (SomeVector v) =>
   State v -> IO ()
-printHomology s = do
+printHomology s = putStrLn . homologyString . blockworldHomology $
+  s ^. blockworld
+
+printHomologies :: (SomeVector v) =>
+  State v -> IO ()
+printHomologies s = do
   putStr "object: "
   putStrLn h
   putStr "complement: "
