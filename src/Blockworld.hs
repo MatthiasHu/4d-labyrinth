@@ -5,6 +5,8 @@ module Blockworld
   , removeBlock
   , blockworldScene
   , blockworldHomology
+  , WithComplement(..)
+  , blockworldHomologies
   ) where
 
 import qualified Data.Map.Strict as Map
@@ -42,3 +44,7 @@ blockworldScene world = SceneFork
 
 blockworldHomology :: (SomeVector v) => Blockworld v -> Homology
 blockworldHomology = cubicalHomology . Map.keys
+
+blockworldHomologies :: (SomeVector v) =>
+  Blockworld v -> WithComplement Homology
+blockworldHomologies = cubicalHomologies . Map.keys

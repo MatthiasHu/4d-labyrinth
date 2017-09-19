@@ -64,13 +64,24 @@ handleMouseButtonPressed :: (SomeVector v, R3 v) =>
   MouseButton -> State v -> IO (State v)
 handleMouseButtonPressed ButtonRight s = do
   let s' = removeBlockHere s
-  putStrLn . homologyString . blockworldHomology $ s' ^. blockworld
+  printHomology s'
   return s'
 handleMouseButtonPressed ButtonLeft s = do
   color <- randomColor
   let s' = addBlockHere color s
-  putStrLn . homologyString . blockworldHomology $ s' ^. blockworld
+  printHomology s'
   return s'
+
+printHomology :: (SomeVector v) =>
+  State v -> IO ()
+printHomology s = do
+  putStr "object: "
+  putStrLn h
+  putStr "complement: "
+  putStrLn h'
+  where
+    WithComplement h h' = fmap homologyString . blockworldHomologies $
+      s ^. blockworld
 
 handleWindowSizeChanged :: State v -> IO (State v)
 handleWindowSizeChanged s = do

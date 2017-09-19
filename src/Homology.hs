@@ -94,7 +94,7 @@ primeFactors n = p : primeFactors (n `div` p)
 type Homology = [GroupType]
 
 homologyString :: Homology -> String
-homologyString = intercalate "-" . map groupTypeString
+homologyString = intercalate "_" . map groupTypeString
 
 groupTypeString :: GroupType -> String
 groupTypeString gt = if M.null gt then "0" else
