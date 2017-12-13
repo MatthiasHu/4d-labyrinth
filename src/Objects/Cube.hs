@@ -16,7 +16,7 @@ import Constraints.Vector
 
 cube :: forall v a. (SomeVector v, Floating a) =>
   a -> Color -> Object v a
-cube radius c = Object zero (sqrt dim * radius) $
+cube radius c = Object zero (sqrt dim * radius) (sqrt 2 * radius) $
   map (Face c) (cubeFaces radius)
   where
     dim = sum (pure 1 :: v a)

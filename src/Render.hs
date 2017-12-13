@@ -22,10 +22,13 @@ import Constraints.Vector
 
 renderObject :: (SomeScalar a) =>
   ShaderLocations -> Object V3 a -> IO ()
-renderObject locs =
-    mapM_ (uncurry (renderFace locs))
-  . faceVertices (view facePlane)
-  . view objectFaces
+renderObject locs obj = do
+  uniform (locs ^. uObjectCenter) $=
+    (v3ToVec3 $ obj ^. objectCenter . lensP)
+  uniform (locs ^. uObjectInnerRadius) $=
+    (obj ^. objectInnerRadius)
+  mapM_ (uncurry (renderFace locs))
+    (faceVertices (view facePlane) . view objectFaces $ obj)
 
 renderFace :: (SomeScalar a) =>
   ShaderLocations -> Face V3 a -> [Point V3 a] -> IO ()
@@ -35,8 +38,11 @@ renderFace locs f verts = do
   renderPrimitive Polygon $ mapM_ vertex' verts
   where
     vertex' (P (V3 x y z)) = vertex (Vertex3 x y z)
-    normal' (V3 x y z) =
-      vertexAttrib ToFloat (locs ^. aNormal) (Vector3 x y z)
+    normal' n =
+      vertexAttrib ToFloat (locs ^. aNormal) (v3ToVec3 n)
+
+v3ToVec3 :: V3 a -> Vector3 a
+v3ToVec3 (V3 x y z) = Vector3 x y z
 
 renderScene :: (SomeVector v, R3 v, SomeScalar a) =>
   ShaderLocations -> SceneTO v a -> IO ()

@@ -6,7 +6,7 @@
 
 module Object
   ( Object(..)
-  , objectCenter, objectRadius, objectFaces
+  , objectCenter, objectRadius, objectInnerRadius, objectFaces
   , Face(..)
   , faceColor, facePlane
   , inReach
@@ -28,6 +28,7 @@ import Transformation
 data Object v a = Object
   { _objectCenter :: Point v a
   , _objectRadius :: a
+  , _objectInnerRadius :: a
   , _objectFaces :: [Face v a]
   }
   deriving (Functor, Show)
@@ -59,10 +60,13 @@ inReach p r o =
 intersectObject :: (Additive v', Metric v, Floating a, Ord a) =>
   Lens' (v a) (v' a) -> Object v a -> Maybe (Object v' a)
 intersectObject lens o = if dist >= (o ^. objectRadius) then Nothing
-  else Just $ Object newCenter newRadius newFaces
+  else Just $ Object newCenter newRadius newInnerRadius newFaces
   where
     dist = norm $ (o ^. objectCenter . _Point) & lens .~ zero
     newCenter = (o ^. objectCenter . _Point . lens . from _Point)
-    newRadius = sqrt $ (o ^. objectRadius)^2 - dist^2
+    newRadius = reduceRadius (o ^. objectRadius)
+    newInnerRadius = reduceRadius (o ^. objectInnerRadius)
     newFaces = (o ^. objectFaces)
       & each . facePlane . planeNormal %~ view lens
+    reduceRadius r = let sq = r^2 - dist^2 in
+      if sq <= 0 then 0 else sqrt sq

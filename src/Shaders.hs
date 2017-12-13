@@ -2,7 +2,7 @@
 
 module Shaders
   ( ShaderLocations
-  , aNormal
+  , aNormal, uObjectCenter, uObjectInnerRadius
   , setupShaders
   ) where
 
@@ -13,7 +13,9 @@ import System.FilePath
 
 
 data ShaderLocations = ShaderLocations
-  { _aNormal :: AttribLocation
+  { _aNormal            :: AttribLocation
+  , _uObjectCenter      :: UniformLocation
+  , _uObjectInnerRadius :: UniformLocation
   }
 
 makeLenses ''ShaderLocations
@@ -57,3 +59,5 @@ linkShaderProgram shaders = do
 getShaderLocations :: Program -> IO ShaderLocations
 getShaderLocations prog = ShaderLocations
   <$> get (attribLocation prog "aNormal")
+  <*> get (uniformLocation prog "uObjectCenter")
+  <*> get (uniformLocation prog "uObjectInnerRadius")

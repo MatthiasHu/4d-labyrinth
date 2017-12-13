@@ -17,4 +17,6 @@ type SomeScalar a =
   , Show a
   , VertexComponent a
   , VertexAttribComponent a
+  , UniformComponent a
+  , Uniform a
   )
