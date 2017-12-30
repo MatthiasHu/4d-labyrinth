@@ -5,6 +5,7 @@ module Worlds
   , gridWorld
   , screwWorld
   , orthogonalPlanes
+  , spaceFillingTunnel
   ) where
 
 
@@ -14,3 +15,4 @@ import Worlds.RandomPeaks
 import Worlds.Grid
 import Worlds.Screw
 import Worlds.OrthogonalPlanes
+import Worlds.SpaceFillingTunnel
