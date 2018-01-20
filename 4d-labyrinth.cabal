@@ -16,8 +16,28 @@ cabal-version:       >=1.10
 
 executable 4d-labyrinth
   main-is:             Main.hs
-  -- other-modules:       
-  other-extensions:    TemplateHaskell, Rank2Types, ScopedTypeVariables, DeriveFunctor
+  other-modules:       Object
+                       Objects.Cube, Objects.Octahedron
+                       Transformation, Scene, SceneTO
+                       Render
+                       Shaders
+                       EventHandling
+                       Movement
+                       Constraints.Scalar, Constraints.Vector
+                       Geometry.Hyperplane, Geometry.Polytope
+                       Geometry.Ray, Geometry.Collision
+                       Geometry.Interval, Geometry.Combinatorics
+                       CollisionObject
+                       Worlds
+                       Worlds.RandomTunnel, Worlds.SpaceFillingTunnel
+                       Worlds.SpaceFillingPath, Worlds.RandomColorBox
+                       Worlds.Grid, Worlds.RandomPeaks, Worlds.Screw
+                       Worlds.OrthogonalPlanes, Worlds.RandomScene
+                       State
+                       Color
+                       RotationMethods
+  other-extensions:    TemplateHaskell, Rank2Types, ScopedTypeVariables
+                       DeriveFunctor
   build-depends:       base >=4.9 && <4.11, OpenGL >=3.0 && <3.1, MonadRandom >=0.5 && <0.6, sdl2 >=2.2 && <2.4, lens >=4.15 && <4.16, linear >=1.20 && <1.21, containers >=0.5 && <0.6, bytestring >=0.10 && <0.11, filepath >=1.4 && <1.5, adjunctions >=4.3 && <4.4, array >=0.5 && <0.6, mtl >=2.2 && <2.3
   hs-source-dirs:      src
   default-language:    Haskell2010
