@@ -42,6 +42,6 @@ movement v0_eye s = s & eye %~ (<> translation ((-1) * t *^ v0))
     pos = P (translationPart invEye)
     t = fromMaybe 1.0 $
           collisionTimeScene margin ray scope (s ^. scene)
-    margin = 0.01
+    margin = 0.02
     ray = (pos, v0)
     scope = interval (-0.1) 1
