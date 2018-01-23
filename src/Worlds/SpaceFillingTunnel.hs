@@ -18,6 +18,7 @@ import Transformation
 import SceneTO
 import Worlds.SpaceFillingPath
 import Objects.Cube
+import Object
 import Color
 
 
@@ -37,4 +38,4 @@ spaceFillingTunnel iteration =
     dim = length (pure 0 :: v Int)
     gem = Transformed
       (translation $ pure 1 ^+^ (zero & _x .~ 2^iteration))
-      (SceneObject $ cube 0.2 white)
+      (SceneObject $ cube 0.2 & objectColor .~ white)

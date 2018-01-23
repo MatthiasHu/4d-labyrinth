@@ -12,10 +12,9 @@ import Geometry.Hyperplane
 
 
 octahedron :: (SomeScalar a) =>
-  a -> Color -> Object V3 a
-octahedron radius c =
-  Object zero radius 0 . map (Face c)
-  $ octahedronFaces faceDist
+  a -> Object V3 a
+octahedron radius =
+  simpleObject radius $ octahedronFaces faceDist
   where
     faceDist = radius / sqrt 3
 

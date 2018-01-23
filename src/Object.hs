@@ -9,6 +9,8 @@ module Object
   , objectCenter, objectRadius, objectInnerRadius, objectFaces
   , Face(..)
   , faceColor, facePlane
+  , objectColor
+  , simpleObject
   , inReach
   , intersectObject
   ) where
@@ -42,6 +44,19 @@ data Face v a = Face
 
 makeLenses ''Object
 makeLenses ''Face
+
+objectColor :: Traversal' (Object v a) Color
+objectColor = objectFaces . each . faceColor
+
+simpleObject :: (SomeVector v, Num a) => a -> [Hyperplane v a] -> Object v a
+simpleObject radius faces = Object
+  { _objectCenter = zero
+  , _objectRadius = radius
+  , _objectInnerRadius = 0
+  , _objectFaces = map (Face defaultColor) faces
+  }
+  where
+    defaultColor = grey
 
 instance (SomeVector v) => Transformable v (Face v) where
   transform = over facePlane . transform

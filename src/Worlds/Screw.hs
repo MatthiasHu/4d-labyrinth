@@ -9,6 +9,7 @@ import SceneTO
 import Transformation
 import Color
 import Objects.Cube
+import Object
 import Constraints.Vector
 
 
@@ -18,7 +19,7 @@ screwWorld = return (scene, eye)
   where
     scene = SceneFork $
       map (\(v, c) -> Transformed (translation $ zero & _xyz .~ v)
-                      $ SceneObject (cube 0.5 c))
+                      $ SceneObject (cube 0.5 & objectColor .~ c))
       [ (V3 1 (-1) (-4), green)
       , (V3 1 (-1) (-5), white)
       , (V3 0 (-1) (-5), red)

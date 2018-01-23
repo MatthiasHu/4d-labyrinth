@@ -5,9 +5,11 @@ module Worlds.RandomColorBox
 
 import Control.Monad.Random
 import Linear hiding (translation)
+import Control.Lens
 
 import SceneTO
 import Objects.Cube
+import Object
 import Transformation
 import Color
 import Constraints.Vector
@@ -20,7 +22,7 @@ randomColorBox n p = fmap SceneFork $ sequence
   | pos <- positions, p pos ]
   where
     makeCube v c = Transformed (translation $ fmap fromIntegral v)
-      . SceneObject $ cube 0.5 c
+      . SceneObject $ cube 0.5 & objectColor .~ c
     positions = sequenceA (pure [0..n])
 
 randomColorBoxTunnel :: (MonadRandom m, SomeVector v, Floating a) =>

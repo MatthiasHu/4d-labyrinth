@@ -7,6 +7,7 @@ module Worlds.RandomTunnel
 import Control.Monad.Random
 import qualified Data.Set as Set
 import Linear hiding (translation)
+import Control.Lens
 
 import Constraints.Scalar
 import Constraints.Vector
@@ -14,6 +15,7 @@ import Worlds.RandomColorBox
 import Transformation
 import SceneTO
 import Objects.Cube
+import Object
 import Color
 
 
@@ -25,7 +27,7 @@ randomTunnel n = do
   tunnelBox <- randomColorBoxTunnel n (`Set.notMember` pathSet)
   let gem = Transformed
         (translation . pure . fromIntegral $ (n-1))
-        (SceneObject $ cube 0.2 white)
+        (SceneObject $ cube 0.2 & objectColor .~ white)
       scene = SceneFork [tunnelBox, gem]
   return (scene, translation (pure (-1)))
 
