@@ -33,7 +33,6 @@ setupGL w = do
   shaderLocs <- setupShaders
   setViewport w
   clearColor $= Color4 0 0 0 1
-  depthFunc $= Just Lequal
   return shaderLocs
 
 setViewport :: Window -> IO ()

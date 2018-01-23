@@ -23,7 +23,7 @@ import Color
 
 
 spaceFillingTunnel :: forall m v a.
-  (MonadRandom m, SomeVector v, R4 v, SomeScalar a) =>
+  (MonadRandom m, SomeVector v, R1 v, SomeScalar a) =>
   Int -> m (SceneTO v a, Transformation v a)
 spaceFillingTunnel iteration =
     (, translation (pure (-1)))
@@ -38,4 +38,4 @@ spaceFillingTunnel iteration =
     dim = length (pure 0 :: v Int)
     gem = Transformed
       (translation $ pure 1 ^+^ (zero & _x .~ 2^iteration))
-      (SceneObject $ cube 0.2 & objectColor .~ white)
+      (SceneObject $ cubeWithWireframe 0.2 & objectColor .~ white)

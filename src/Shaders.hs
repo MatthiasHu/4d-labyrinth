@@ -2,6 +2,7 @@
 
 module Shaders
   ( ShaderLocations
+  , program
   , aNormal, uObjectCenter, uObjectInnerRadius
   , setupShaders
   ) where
@@ -13,7 +14,8 @@ import System.FilePath
 
 
 data ShaderLocations = ShaderLocations
-  { _aNormal            :: AttribLocation
+  { _program            :: Program
+  , _aNormal            :: AttribLocation
   , _uObjectCenter      :: UniformLocation
   , _uObjectInnerRadius :: UniformLocation
   }
@@ -51,13 +53,13 @@ linkShaderProgram shaders = do
   linkProgram prog
   success <- linkStatus prog
   case success of
-    True -> currentProgram $= Just prog >> return prog
+    True -> return prog
     False -> do
       log <- programInfoLog prog
       error $ "error linking shader program\ninfo log:\n" ++ log
 
 getShaderLocations :: Program -> IO ShaderLocations
-getShaderLocations prog = ShaderLocations
+getShaderLocations prog = ShaderLocations prog
   <$> get (attribLocation prog "aNormal")
   <*> get (uniformLocation prog "uObjectCenter")
   <*> get (uniformLocation prog "uObjectInnerRadius")

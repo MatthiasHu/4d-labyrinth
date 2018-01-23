@@ -27,7 +27,7 @@ randomTunnel n = do
   tunnelBox <- randomColorBoxTunnel n (`Set.notMember` pathSet)
   let gem = Transformed
         (translation . pure . fromIntegral $ (n-1))
-        (SceneObject $ cube 0.2 & objectColor .~ white)
+        (SceneObject $ cubeWithWireframe 0.2 & objectColor .~ white)
       scene = SceneFork [tunnelBox, gem]
   return (scene, translation (pure (-1)))
 

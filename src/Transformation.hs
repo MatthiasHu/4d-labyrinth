@@ -40,7 +40,7 @@ type Transformation v a = TransformationRaw (M v a) (v a)
 class Transformable v f where
   transform :: (Num a) => Transformation v a -> f a -> f a
 
--- Apply the trnsformation to a point.
+-- Apply the transformation to a point.
 instance (Foldable v, Additive v) =>
   Transformable v (Point v) where
   transform (Transformation rot trans) (P p) = (P (rot !* p) .+^ trans)

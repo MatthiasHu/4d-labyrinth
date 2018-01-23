@@ -7,6 +7,7 @@
 module Object
   ( Object(..)
   , objectCenter, objectRadius, objectInnerRadius, objectFaces
+  , objectWireframe
   , Face(..)
   , faceColor, facePlane
   , objectColor
@@ -24,6 +25,7 @@ import Constraints.Vector
 import Geometry.Hyperplane
 import Color
 import Transformation
+import Wireframe
 
 
 -- A graphical object.
@@ -32,6 +34,7 @@ data Object v a = Object
   , _objectRadius :: a
   , _objectInnerRadius :: a
   , _objectFaces :: [Face v a]
+  , _objectWireframe :: Maybe (Wireframe v a)
   }
   deriving (Functor, Show)
 
@@ -50,10 +53,11 @@ objectColor = objectFaces . each . faceColor
 
 simpleObject :: (SomeVector v, Num a) => a -> [Hyperplane v a] -> Object v a
 simpleObject radius faces = Object
-  { _objectCenter = zero
+  { _objectCenter = origin
   , _objectRadius = radius
   , _objectInnerRadius = 0
   , _objectFaces = map (Face defaultColor) faces
+  , _objectWireframe = Nothing
   }
   where
     defaultColor = grey
@@ -65,6 +69,7 @@ instance (SomeVector v) => Transformable v (Object v) where
   transform t =
       (objectFaces . each %~ transform t)
     . (objectCenter %~ transform t)
+    . (objectWireframe %~ fmap (transform t))
 
 inReach :: (SomeVector v, SomeScalar a) =>
   Point v a -> a -> Object v a -> Bool
@@ -75,13 +80,19 @@ inReach p r o =
 intersectObject :: (Additive v', Metric v, Floating a, Ord a) =>
   Lens' (v a) (v' a) -> Object v a -> Maybe (Object v' a)
 intersectObject lens o = if dist >= (o ^. objectRadius) then Nothing
-  else Just $ Object newCenter newRadius newInnerRadius newFaces
+  else Just $ Object
+    { _objectCenter = newCenter
+    , _objectRadius = newRadius
+    , _objectInnerRadius = newInnerRadius
+    , _objectFaces = newFaces
+    , _objectWireframe = Nothing
+    }
   where
     dist = norm $ (o ^. objectCenter . _Point) & lens .~ zero
-    newCenter = (o ^. objectCenter . _Point . lens . from _Point)
+    newCenter = o ^. objectCenter . _Point . lens . from _Point
     newRadius = reduceRadius (o ^. objectRadius)
     newInnerRadius = reduceRadius (o ^. objectInnerRadius)
-    newFaces = (o ^. objectFaces)
+    newFaces = o ^. objectFaces
       & each . facePlane . planeNormal %~ view lens
     reduceRadius r = let sq = r^2 - dist^2 in
       if sq <= 0 then 0 else sqrt sq
