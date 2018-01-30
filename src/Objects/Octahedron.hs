@@ -7,7 +7,6 @@ import Linear.Affine
 
 import Constraints.Scalar
 import Object
-import Color
 import Geometry.Hyperplane
 
 

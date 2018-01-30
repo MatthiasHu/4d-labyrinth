@@ -13,7 +13,6 @@ import Data.List
 
 import Object
 import Wireframe
-import Color
 import Geometry.Hyperplane
 import Constraints.Vector
 

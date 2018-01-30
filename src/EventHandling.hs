@@ -9,12 +9,13 @@ import Data.Int
 
 import State
 import RotationMethods
+import Interaction
 import Transformation
 import Setup
 import Constraints.Vector
 
 
-handleEvent :: (SomeVector v) =>
+handleEvent :: (SomeVector v, R3 v) =>
   EventPayload -> State v -> IO (State v)
 handleEvent (WindowClosedEvent _) = const quitAndExit
 handleEvent (KeyboardEvent (KeyboardEventData _ Pressed _ keysym)) =
@@ -23,6 +24,9 @@ handleEvent (MouseMotionEvent (MouseMotionEventData _ _ _ _ d)) =
   handleMouseMotion d
 handleEvent (MouseWheelEvent (MouseWheelEventData _ _ d _)) =
   handleMouseWheel d
+handleEvent (MouseButtonEvent
+  (MouseButtonEventData _ Pressed _ ButtonLeft _ _)) =
+  handleMouseButton
 handleEvent (WindowSizeChangedEvent _) =
   handleWindowSizeChanged
 handleEvent _ = return
@@ -47,6 +51,10 @@ handleMouseWheel (V2 _ dy) = return . rotationInput
   (0, 0, fromIntegral dy * sensitivity)
   where
     sensitivity = 0.05
+
+handleMouseButton :: (SomeVector v, R3 v) =>
+  State v -> IO (State v)
+handleMouseButton = return . placeObject
 
 rotationInput :: (SomeVector v) =>
   RotationInput Scalar -> State v -> State v

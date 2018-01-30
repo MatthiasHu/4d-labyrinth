@@ -9,6 +9,7 @@ import Setup
 import State
 import Worlds
 import RotationMethods
+import Objects.Arrowhead
 import Scene
 import EventHandling
 import Render
@@ -20,10 +21,13 @@ main :: IO ()
 main = do
   let world = spaceFillingTunnel 1
       rotationMethod = rot4dQuaternion
+      placeableObject = Just arrowhead
   (window, shaderLocs) <- setup
   (scene, eye) <- world
   startTime <- ticks
-  mainLoop $ State window shaderLocs scene eye rotationMethod startTime
+  mainLoop $ State
+    window shaderLocs scene eye
+    rotationMethod startTime placeableObject
 
 mainLoop :: (SomeVector v, R3 v) =>
   State v -> IO ()
