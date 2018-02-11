@@ -18,8 +18,7 @@ placeObject state = case state ^. placeableObject of
     Just o -> state &
       scene .~ SceneFork [new o, state ^. scene]
   where
-    new o = Transformed (invert (state ^. eye) <> inFront)
-          $ SceneObject o
+    new = Transformed (invert (state ^. eye) <> inFront)
 
 inFront :: (SomeVector v, R3 v, Fractional a) => Transformation v a
-inFront = translation (zero & _z .~ (-0.3))
+inFront = translation (zero & _z .~ (-0.5))

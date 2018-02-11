@@ -9,7 +9,7 @@ import Setup
 import State
 import Worlds
 import RotationMethods
-import Objects.Arrowhead
+import Objects.Dart
 import Scene
 import EventHandling
 import Render
@@ -21,7 +21,7 @@ main :: IO ()
 main = do
   let world = spaceFillingTunnel 1
       rotationMethod = rot4dQuaternion
-      placeableObject = Just arrowhead
+      placeableObject = Just dart
   (window, shaderLocs) <- setup
   (scene, eye) <- world
   startTime <- ticks
@@ -67,7 +67,7 @@ tick s0 = do
   return $ s & (movementInput speed
     $ map (uncurry compare . over both keydown) movementKeys)
   where
-    speed = 0.10
+    speed = 0.05
 
 movementKeys =
   [ (ScancodeD, ScancodeA)

@@ -6,6 +6,7 @@
 module Geometry.Hyperplane
   ( Hyperplane(..)
   , planeNormal, planeValue
+  , mkHyperplane
   , planeDist
   , movePlane
   ) where
@@ -26,6 +27,10 @@ data Hyperplane v a = Hyperplane
   deriving (Show, Functor)
 
 makeLenses ''Hyperplane
+
+mkHyperplane :: (Metric v, Floating a, Epsilon a) =>
+  v a -> a -> Hyperplane v a
+mkHyperplane n0 v0 = Hyperplane (normalize n0) (norm n0 * v0)
 
 -- Positive values mean 'in front of the plane'
 -- (or 'outside the half space'),

@@ -34,7 +34,7 @@ data State v = State
   , _eye :: Transformation v Scalar
   , _rotationMethod :: RotationMethod v Scalar
   , _lastTick :: Word32
-  , _placeableObject :: Maybe (Object v Scalar)
+  , _placeableObject :: Maybe (SceneTO v Scalar)
   }
 
 makeLenses ''State
