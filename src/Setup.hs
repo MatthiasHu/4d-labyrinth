@@ -17,7 +17,7 @@ setup :: IO (Window, ShaderLocations)
 setup = do
   initialize [InitVideo]
   _ <- setMouseLocationMode RelativeLocation
-  window <- createWindow "3d labyrinth" windowConfig
+  window <- createWindow "4d labyrinth" windowConfig
   shaderLocs <- setupGL window
   return (window, shaderLocs)
 
