@@ -34,7 +34,8 @@ collisionTimeScene margin ray scope scene =
         transformedSceneObjects scene
     reach = magnitude scope * norm (snd ray)
 
-collisionIntervalObject :: (SomeVector v, Ord a, Fractional a) =>
+collisionIntervalObject ::
+  (SomeVector v, Ord a, Fractional a, Epsilon a) =>
   a -> Ray v a -> Interval a -> Object v a -> Maybe (Interval a)
 collisionIntervalObject margin ray scope =
     collisionInterval ray scope
