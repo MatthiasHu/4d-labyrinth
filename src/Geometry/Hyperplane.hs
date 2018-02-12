@@ -30,7 +30,9 @@ makeLenses ''Hyperplane
 
 mkHyperplane :: (Metric v, Floating a, Epsilon a) =>
   v a -> a -> Hyperplane v a
-mkHyperplane n0 v0 = Hyperplane (normalize n0) (norm n0 * v0)
+mkHyperplane n0 v0 = Hyperplane (n0 ^/ s) (v0 / s)
+  where
+    s = norm n0
 
 -- Positive values mean 'in front of the plane'
 -- (or 'outside the half space'),
