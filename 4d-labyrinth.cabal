@@ -19,6 +19,7 @@ executable 4d-labyrinth
   other-modules:       Object
                        Objects.Cube, Objects.Octahedron
                        Transformation, Scene, SceneTO
+                       Wireframe
                        Render
                        Shaders
                        EventHandling
