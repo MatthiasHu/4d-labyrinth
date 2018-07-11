@@ -18,7 +18,7 @@ import Constraints.Vector
 
 main :: IO ()
 main = do
-  let world = spaceFillingTunnel 1
+  let world = return $ hyperspiral1 100
       rotationMethod = rot4dQuaternion
   (window, shaderLocs) <- setup
   (scene, eye) <- world

@@ -6,6 +6,8 @@ module Worlds
   , screwWorld
   , orthogonalPlanes
   , spaceFillingTunnel
+  , hyperspiral
+  , hyperspiral1
   ) where
 
 
@@ -16,3 +18,4 @@ import Worlds.Grid
 import Worlds.Screw
 import Worlds.OrthogonalPlanes
 import Worlds.SpaceFillingTunnel
+import Worlds.Hyperspiral
