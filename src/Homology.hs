@@ -69,6 +69,9 @@ mkMatrix js f = fromEntries
   [ ((i, j), c) | j <- S.toList js, (i, c) <- M.assocs (f j) ]
 
 
+-- Cyclic group with order a prime power or infinite.
+-- These are the "primitive" groups in the classification theorem
+-- for finitely generated abelian groups (in prime decomposition form).
 data PrimitiveGroupType = ZZ | ZZmod Integer
   deriving (Eq, Ord, Show)
 
@@ -76,6 +79,9 @@ pgtString :: PrimitiveGroupType -> String
 pgtString ZZ = "Z"
 pgtString (ZZmod n) = "Z"++show n
 
+-- Isomorphism type of a finitely generated abelian group.
+-- The direct sum of abelian groups in this representation is simply
+-- computed by: M.unionWith (+)
 type GroupType = M.Map PrimitiveGroupType Integer
 
 cyclicGroup :: Integer -> GroupType
