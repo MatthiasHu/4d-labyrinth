@@ -2,6 +2,7 @@
 
 module Geometry.Combinatorics
   ( choose
+  , choose'
   , Triple
   , Pair
   , triples
