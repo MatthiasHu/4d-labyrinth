@@ -11,7 +11,7 @@ let
       mkDerivation {
         pname = "4d-labyrinth";
         version = "0.1.0.0";
-        src = ./4d-labyrinth;
+        src = ./.;
         isLibrary = false;
         isExecutable = true;
         executableHaskellDepends = [
