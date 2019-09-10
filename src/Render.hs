@@ -3,6 +3,7 @@ module Render
   ) where
 
 import Graphics.Rendering.OpenGL hiding (Face)
+import qualified Data.Vector.Storable as VS
 import Linear
 import Linear.Affine
 import Control.Lens hiding (transform)
@@ -19,6 +20,23 @@ import Color
 import Constraints.Vector
 
 
+-- render object ray-tracing hyperplane intersection on the gpu
+renderObject' :: (SomeScalar a) =>
+  ShaderLocations -> Object V3 a -> IO ()
+renderObject' locs obj = do
+  let
+    planeNormals = VS.fromList
+      (obj ^. objectFaces . facePlane . planeNormal)
+    planeValues = VS.fromList
+      (obj ^. objectFaces . facePlane . planeValue)
+  uniformv' (locs ^. uHyperplaneNormals) planeNormals
+  uniformv' (locs ^. uHyperplaneValues) planeValues
+  undefined
+
+uniformv' :: UniformLocation -> VS.Vector a -> IO ()
+uniformv' = undefined
+
+-- old-style render object, computing vertices on the cpu
 renderObject :: (SomeScalar a) =>
   ShaderLocations -> Object V3 a -> IO ()
 renderObject locs obj = do
@@ -57,16 +75,21 @@ renderScene :: (SomeVector v, R3 v, SomeScalar a) =>
   ShaderLocations -> SceneTO v a -> IO ()
 renderScene locs scene = do
   let os = transformedSceneObjects scene
-  prepareRenderObjects locs
-  mapM_ (renderObject locs) . mapMaybe (intersectObject _xyz) $ os
+  prepareRenderObjects' locs
+  mapM_ (renderObject' locs) . mapMaybe (intersectObject _xyz) $ os
   prepareRenderWireframes
   mapM_ (renderWireframe . projectWireframe _xyz)
     . mapMaybe (view objectWireframe) $ os
 
+prepareRenderObjects' :: ShaderLocations -> IO ()
+prepareRenderObjects' locs = do
+  depthFunc $= Just Lequal
+  currentProgram $= Just (locs ^. programGpuIntersection)
+
 prepareRenderObjects :: ShaderLocations -> IO ()
 prepareRenderObjects locs = do
   depthFunc $= Just Lequal
-  currentProgram $= Just (locs ^. program)
+  currentProgram $= Just (locs ^. programOldStyle)
 
 prepareRenderWireframes :: IO ()
 prepareRenderWireframes = do

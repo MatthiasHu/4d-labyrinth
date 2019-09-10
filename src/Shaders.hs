@@ -2,7 +2,8 @@
 
 module Shaders
   ( ShaderLocations
-  , program
+  , programOldStyle
+  , programCpuIntersection
   , aNormal, uObjectCenter, uObjectInnerRadius
   , setupShaders
   ) where
@@ -14,10 +15,11 @@ import System.FilePath
 
 
 data ShaderLocations = ShaderLocations
-  { _program            :: Program
-  , _aNormal            :: AttribLocation
-  , _uObjectCenter      :: UniformLocation
-  , _uObjectInnerRadius :: UniformLocation
+  { _programOldStyle        :: Program
+  , _programCpuIntersection :: Program
+  , _aNormal                :: AttribLocation
+  , _uObjectCenter          :: UniformLocation
+  , _uObjectInnerRadius     :: UniformLocation
   }
 
 makeLenses ''ShaderLocations
@@ -25,12 +27,18 @@ makeLenses ''ShaderLocations
 
 setupShaders :: IO ShaderLocations
 setupShaders = do
+  program  <- compileShaderProgram "vertshader.sl" "fragshader.sl"
+  program' <- compileShaderProgram
+    "vertshader_gpu_intersection.sl" "fragshader_gpu_intersection.sl"
+  getShaderLocations program program'
+
+compileShaderProgram :: FilePath -> FilePath -> IO Program
+compileShaderProgram vert frag = do
   fragShader <- compileShaderFile VertexShader $
-    "src" </> "shaders" </> "vertshader.sl"
+    "src" </> "shaders" </> vert
   vertShader <- compileShaderFile FragmentShader $
-    "src" </> "shaders" </> "fragshader.sl"
-  program <- linkShaderProgram [fragShader, vertShader]
-  getShaderLocations program
+    "src" </> "shaders" </> frag
+  linkShaderProgram [fragShader, vertShader]
 
 compileShaderFile :: ShaderType -> FilePath -> IO Shader
 compileShaderFile shaderType file = do
@@ -58,8 +66,8 @@ linkShaderProgram shaders = do
       log <- programInfoLog prog
       error $ "error linking shader program\ninfo log:\n" ++ log
 
-getShaderLocations :: Program -> IO ShaderLocations
-getShaderLocations prog = ShaderLocations prog
+getShaderLocations :: Program -> Program -> IO ShaderLocations
+getShaderLocations prog prog' = ShaderLocations prog prog'
   <$> get (attribLocation prog "aNormal")
   <*> get (uniformLocation prog "uObjectCenter")
   <*> get (uniformLocation prog "uObjectInnerRadius")
