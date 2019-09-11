@@ -3,23 +3,26 @@
 module Shaders
   ( ShaderLocations
   , programOldStyle
-  , programCpuIntersection
+  , programGpuIntersection
   , aNormal, uObjectCenter, uObjectInnerRadius
+  , uHyperplaneNormals, uHyperplaneValues
   , setupShaders
   ) where
 
 import Graphics.Rendering.OpenGL
 import Control.Lens
-import Data.ByteString as BS
+import qualified Data.ByteString as BS
 import System.FilePath
 
 
 data ShaderLocations = ShaderLocations
   { _programOldStyle        :: Program
-  , _programCpuIntersection :: Program
+  , _programGpuIntersection :: Program
   , _aNormal                :: AttribLocation
   , _uObjectCenter          :: UniformLocation
   , _uObjectInnerRadius     :: UniformLocation
+  , _uHyperplaneNormals     :: UniformLocation
+  , _uHyperplaneValues      :: UniformLocation
   }
 
 makeLenses ''ShaderLocations
@@ -71,3 +74,5 @@ getShaderLocations prog prog' = ShaderLocations prog prog'
   <$> get (attribLocation prog "aNormal")
   <*> get (uniformLocation prog "uObjectCenter")
   <*> get (uniformLocation prog "uObjectInnerRadius")
+  <*> get (uniformLocation prog' "uHyperplaneNormals")
+  <*> get (uniformLocation prog' "uHyperplaneValues")

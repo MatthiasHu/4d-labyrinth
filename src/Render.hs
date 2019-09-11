@@ -20,21 +20,28 @@ import Color
 import Constraints.Vector
 
 
--- render object ray-tracing hyperplane intersection on the gpu
+-- render object, ray-tracing intersection of half spaces on the gpu
 renderObject' :: (SomeScalar a) =>
   ShaderLocations -> Object V3 a -> IO ()
 renderObject' locs obj = do
   let
     planeNormals = VS.fromList
-      (obj ^. objectFaces . facePlane . planeNormal)
+      (obj ^.. objectFaces . each . facePlane . planeNormal . to v3ToVec3)
     planeValues = VS.fromList
-      (obj ^. objectFaces . facePlane . planeValue)
+      (obj ^.. objectFaces . each . facePlane . planeValue)
   uniformv' (locs ^. uHyperplaneNormals) planeNormals
   uniformv' (locs ^. uHyperplaneValues) planeValues
-  undefined
+  renderPrimitive Quads $ mapM_ vertex (
+    [ Vertex3 0 0 0
+    , Vertex3 0.7 0 0
+    , Vertex3 0.7 0.4 0
+    , Vertex3 0 0.4 0
+    ] :: [Vertex3 GLfloat] )
 
-uniformv' :: UniformLocation -> VS.Vector a -> IO ()
-uniformv' = undefined
+uniformv' :: (VS.Storable a, Uniform a) =>
+  UniformLocation -> VS.Vector a -> IO ()
+uniformv' ul v = VS.unsafeWith v $ \ptr ->
+  uniformv ul (fromIntegral $ VS.length v) ptr
 
 -- old-style render object, computing vertices on the cpu
 renderObject :: (SomeScalar a) =>
