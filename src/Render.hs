@@ -32,10 +32,10 @@ renderObject' locs obj = do
   uniformv' (locs ^. uHyperplaneNormals) planeNormals
   uniformv' (locs ^. uHyperplaneValues) planeValues
   renderPrimitive Quads $ mapM_ vertex (
-    [ Vertex3 0 0 0
-    , Vertex3 0.7 0 0
-    , Vertex3 0.7 0.4 0
-    , Vertex3 0 0.4 0
+    [ Vertex3 (-1) (-1) 0
+    , Vertex3 (-1)   1  0
+    , Vertex3   1    1  0
+    , Vertex3   1  (-1) 0
     ] :: [Vertex3 GLfloat] )
 
 uniformv' :: (VS.Storable a, Uniform a) =>
