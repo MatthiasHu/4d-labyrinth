@@ -23,14 +23,17 @@ randomScene = return (scene, eye)
     eye = mempty
 
 randomScene2 :: (Monad m, Floating a, Ord a) =>
-  m (SceneTO V4 a, Transformation V4 a)
-randomScene2 = return (scene, eye)
+  Int -> m (SceneTO V4 a, Transformation V4 a)
+randomScene2 n = return (scene, eye)
   where
     scene = SceneFork
       . map (\(t, o) -> Transformed (translation t) $ SceneObject o) $
+      [ (t ^+^ V4 0 0 (-3 * fromIntegral z) 0, o)
+      | z <- [0..n], (t, o) <-
       [ (V4 0 0 (-4) 0, diamond 1.0 & objectColor .~ red)
       , (V4 4 0 (-4) 0, diamond 1.0 & objectColor .~ blue)
       , (V4 2 2 (-4) 0, diamond 1.0 & objectColor .~ green)
       , (V4 2 0 (-4) 2, diamond 1.0 & objectColor .~ red)
+      ]
       ]
     eye = mempty

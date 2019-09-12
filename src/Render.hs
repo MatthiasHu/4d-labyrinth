@@ -31,12 +31,26 @@ renderObject' locs obj = do
       (obj ^.. objectFaces . each . facePlane . planeValue)
   uniformv' (locs ^. uHyperplaneNormals) planeNormals
   uniformv' (locs ^. uHyperplaneValues) planeValues
-  renderPrimitive Quads $ mapM_ vertex (
-    [ Vertex3 (-1) (-1) 0
-    , Vertex3 (-1)   1  0
-    , Vertex3   1    1  0
-    , Vertex3   1  (-1) 0
-    ] :: [Vertex3 GLfloat] )
+  renderPrimitive Quads . mapM_ vertex' . concat $
+    boundingBoxQuads obj
+
+boundingBoxQuads :: (SomeScalar a) =>
+  Object V3 a -> [[Point V3 a]]
+boundingBoxQuads obj = map (map adjust)
+  [ [ a*^x ^+^ b*^y ^+^ z
+    | (a, b) <- [(1, 1), (1, -1), (-1, -1), (-1, 1)]
+    ]
+  | (x, y, z) <-
+    [ (V3 1 0 0, V3 0 1 0, V3 0 0 1)
+    , (V3 0 1 0, V3 0 0 1, V3 1 0 0)
+    , (V3 0 0 1, V3 1 0 0, V3 0 1 0)
+    , (V3 (-1) 0 0, V3 0 (-1) 0, V3 0 0 (-1))
+    , (V3 0 (-1) 0, V3 0 0 (-1), V3 (-1) 0 0)
+    , (V3 0 0 (-1), V3 (-1) 0 0, V3 0 (-1) 0)
+    ]
+  ]
+  where
+    adjust = (obj ^. objectCenter .+^) . (^* obj ^. objectRadius)
 
 uniformv' :: (VS.Storable a, Uniform a) =>
   UniformLocation -> VS.Vector a -> IO ()
