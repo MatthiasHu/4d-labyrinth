@@ -30,31 +30,37 @@ makeLenses ''ShaderLocations
 
 setupShaders :: IO ShaderLocations
 setupShaders = do
-  program  <- compileShaderProgram "vertshader.sl" "fragshader.sl"
+  program  <- compileShaderProgram
+    ["vertshader.sl"]
+    ["fragshader.sl", "lighting.sl"]
   program' <- compileShaderProgram
-    "vertshader_gpu_intersection.sl" "fragshader_gpu_intersection.sl"
+    ["vertshader_gpu_intersection.sl"]
+    ["fragshader_gpu_intersection.sl", "lighting.sl"]
   getShaderLocations program program'
 
-compileShaderProgram :: FilePath -> FilePath -> IO Program
-compileShaderProgram vert frag = do
-  fragShader <- compileShaderFile VertexShader $
-    "src" </> "shaders" </> vert
-  vertShader <- compileShaderFile FragmentShader $
-    "src" </> "shaders" </> frag
+compileShaderProgram :: [FilePath] -> [FilePath] -> IO Program
+compileShaderProgram vertFiles fragFiles = do
+  fragShader <- compileShaderFromFiles VertexShader $
+    map (("src" </> "shaders") </>) vertFiles
+  vertShader <- compileShaderFromFiles FragmentShader $
+    map (("src" </> "shaders") </>) fragFiles
   linkShaderProgram [fragShader, vertShader]
 
-compileShaderFile :: ShaderType -> FilePath -> IO Shader
-compileShaderFile shaderType file = do
-  source <- BS.readFile file
+-- Concatenate GLSL code from a list of files and compile it to a shader.
+-- This makes line numbers in GLSL error messages less useful,
+-- but #include statements in GLSL code would require an extension.
+compileShaderFromFiles :: ShaderType -> [FilePath] -> IO Shader
+compileShaderFromFiles shaderType files = do
+  sources <- mapM BS.readFile files
   shader <- createShader shaderType
-  shaderSourceBS shader $= source
+  shaderSourceBS shader $= BS.concat sources
   compileShader shader
   success <- compileStatus shader
   case success of
     True -> return shader
     False -> do
       log <- shaderInfoLog shader
-      error $ "error compiling shader from file " ++ show file
+      error $ "error compiling shader from files " ++ show files
               ++ "\ninfo log:\n" ++ log
 
 linkShaderProgram :: [Shader] -> IO Program
