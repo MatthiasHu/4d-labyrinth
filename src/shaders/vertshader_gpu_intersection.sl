@@ -1,8 +1,8 @@
 #version 120
 
-varying vec3 vEyeCoords;
+varying vec3 vEyeCoordsBoundingBox;
 
 void main() {
   gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-  vEyeCoords = (gl_ModelViewMatrix * gl_Vertex).xyz;
+  vEyeCoordsBoundingBox = (gl_ModelViewMatrix * gl_Vertex).xyz;
 }

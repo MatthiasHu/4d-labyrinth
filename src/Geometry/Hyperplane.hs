@@ -19,6 +19,8 @@ import Transformation
 
 
 -- A hyperplane (or half space) of a vector space.
+-- The normal must be non-zero, but not necessarily of unit length.
+-- (See planeDist below for the points lying on the hyperplane.)
 data Hyperplane v a = Hyperplane
   { _planeNormal :: v a
   , _planeValue :: a

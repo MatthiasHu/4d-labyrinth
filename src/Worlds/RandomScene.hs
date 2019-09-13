@@ -29,7 +29,7 @@ randomScene2 n = return (scene, eye)
     scene = SceneFork
       . map (\(t, o) -> Transformed (translation t) $ SceneObject o) $
       [ (t ^+^ V4 0 0 (-3 * fromIntegral z) 0, o)
-      | z <- [0..n], (t, o) <-
+      | z <- [0..(n-1)], (t, o) <-
       [ (V4 0 0 (-4) 0, diamond 1.0 & objectColor .~ red)
       , (V4 4 0 (-4) 0, diamond 1.0 & objectColor .~ blue)
       , (V4 2 2 (-4) 0, diamond 1.0 & objectColor .~ green)

@@ -15,7 +15,7 @@ import Geometry.Hyperplane
 import Geometry.Combinatorics
 
 
--- A convex polytope given as intersetion of half spaces.
+-- A convex polytope given as intersection of half spaces.
 type Polytope v a = [Hyperplane v a]
 
 faceVertices :: (SomeScalar a) =>

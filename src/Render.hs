@@ -4,7 +4,7 @@ module Render
 
 import Graphics.Rendering.OpenGL hiding (Face)
 import qualified Data.Vector.Storable as VS
-import Linear
+import Linear hiding (translation)
 import Linear.Affine
 import Control.Lens hiding (transform)
 import Data.Maybe
@@ -17,6 +17,7 @@ import Shaders
 import Geometry.Polytope
 import Geometry.Hyperplane
 import Color
+import Transformation
 import Constraints.Vector
 
 
@@ -31,15 +32,22 @@ renderObject' locs obj = do
       (obj ^.. objectFaces . each . facePlane . planeValue)
   uniformv' (locs ^. uHyperplaneNormals) planeNormals
   uniformv' (locs ^. uHyperplaneValues) planeValues
+  -- cover rear faces of a bounding box
   renderPrimitive Quads . mapM_ vertex' . concat $
-    boundingBoxQuads obj
+    [ quad
+    | (quad, h) <- boundingBoxQuads obj
+    , planeDist h origin <= 0
+    ]
 
 boundingBoxQuads :: (SomeScalar a) =>
-  Object V3 a -> [[Point V3 a]]
-boundingBoxQuads obj = map (map adjust)
-  [ [ a*^x ^+^ b*^y ^+^ z
-    | (a, b) <- [(1, 1), (1, -1), (-1, -1), (-1, 1)]
-    ]
+  Object V3 a -> [([Point V3 a], Hyperplane V3 a)]
+boundingBoxQuads obj =
+  [ ( [ adjust (a*^x ^+^ b*^y ^+^ z)
+      | (a, b) <- [(1, 1), (1, -1), (-1, -1), (-1, 1)]
+      ]
+    , transform (translation (obj ^. objectCenter . _Point))
+        (Hyperplane z (obj ^. objectRadius))
+    )
   | (x, y, z) <-
     [ (V3 1 0 0, V3 0 1 0, V3 0 0 1)
     , (V3 0 1 0, V3 0 0 1, V3 1 0 0)
