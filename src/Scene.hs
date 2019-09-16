@@ -1,9 +1,11 @@
 module Scene
   ( Scene(..)
+  , rawSceneObjects
   , sceneObjects
   ) where
 
 import Data.Monoid
+import Control.Lens
 
 
 -- A scene tree, managing the order of transformation compositions
@@ -15,6 +17,14 @@ data Scene t a =
 
 sceneObjects :: (Monoid t) => Scene t a -> [(t, a)]
 sceneObjects = go mempty
+
+rawSceneObjects :: Traversal' (Scene t a) a
+rawSceneObjects f (SceneObject a) =
+  SceneObject <$> (f a)
+rawSceneObjects f (SceneFork l) =
+  SceneFork <$> sequenceA (map (rawSceneObjects f) l)
+rawSceneObjects f (Transformed t s) =
+  Transformed t <$> rawSceneObjects f s
 
 go :: (Monoid t) => t -> Scene t a -> [(t, a)]
 go t (SceneObject a)    = return (t, a)

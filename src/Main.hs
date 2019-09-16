@@ -8,6 +8,7 @@ import Control.Lens
 import Setup
 import State
 import Worlds
+import Worlds.Tessellation
 import RotationMethods
 import Scene
 import EventHandling
@@ -18,7 +19,7 @@ import Constraints.Vector
 
 main :: IO ()
 main = do
-  let world = randomScene2 10
+  let world = randomTunnel diamonds (pure 2)
       rotationMethod = rot4dQuaternion
   (window, shaderLocs) <- setup
   (scene, eye) <- world
