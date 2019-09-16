@@ -5,7 +5,7 @@ module Shaders
   , programOldStyle
   , programGpuIntersection
   , aNormal, uObjectCenter, uObjectInnerRadius
-  , uHyperplaneNormals, uHyperplaneValues
+  , uHyperplaneNormals, uHyperplaneValues, uHyperplaneColors
   , setupShaders
   ) where
 
@@ -23,6 +23,7 @@ data ShaderLocations = ShaderLocations
   , _uObjectInnerRadius     :: UniformLocation
   , _uHyperplaneNormals     :: UniformLocation
   , _uHyperplaneValues      :: UniformLocation
+  , _uHyperplaneColors      :: UniformLocation
   }
 
 makeLenses ''ShaderLocations
@@ -82,3 +83,4 @@ getShaderLocations prog prog' = ShaderLocations prog prog'
   <*> get (uniformLocation prog "uObjectInnerRadius")
   <*> get (uniformLocation prog' "uHyperplaneNormals")
   <*> get (uniformLocation prog' "uHyperplaneValues")
+  <*> get (uniformLocation prog' "uHyperplaneColors")

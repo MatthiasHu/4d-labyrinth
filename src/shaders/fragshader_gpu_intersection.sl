@@ -4,6 +4,7 @@
 
 uniform vec3 uHyperplaneNormals[max_hyperplanes];
 uniform float uHyperplaneValues[max_hyperplanes];
+uniform vec3 uHyperplaneColors[max_hyperplanes];
 
 varying vec3 vEyeCoordsBoundingBox;
 
@@ -32,7 +33,7 @@ void main() {
   if (t_0 <= t_1 && t_0 > 0) {
     gl_FragColor =
       lighting(t_0 * ray, normalize(uHyperplaneNormals[k]))
-      * vec4(1, 1, 1, 1);
+      * vec4(uHyperplaneColors[k], 1);
     gl_FragDepth = 1 - 1/(1+t_0);
   }
   else {

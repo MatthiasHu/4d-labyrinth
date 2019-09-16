@@ -26,12 +26,13 @@ renderObject' :: (SomeScalar a) =>
   ShaderLocations -> Object V3 a -> IO ()
 renderObject' locs obj = do
   let
-    planeNormals = VS.fromList
-      (obj ^.. objectFaces . each . facePlane . planeNormal . to v3ToVec3)
-    planeValues = VS.fromList
-      (obj ^.. objectFaces . each . facePlane . planeValue)
-  uniformv' (locs ^. uHyperplaneNormals) planeNormals
-  uniformv' (locs ^. uHyperplaneValues) planeValues
+    ofFaces lens = VS.fromList (obj ^.. objectFaces . each . lens)
+    normals = ofFaces (facePlane . planeNormal . to v3ToVec3)
+    values  = ofFaces (facePlane . planeValue)
+    colors  = ofFaces faceColor
+  uniformv' (locs ^. uHyperplaneNormals) normals
+  uniformv' (locs ^. uHyperplaneValues) values
+  uniformv' (locs ^. uHyperplaneColors) colors
   -- cover rear faces of a bounding box
   renderPrimitive Quads . mapM_ vertex' . concat $
     [ quad
