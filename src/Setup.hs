@@ -23,7 +23,7 @@ setup = do
 
 windowConfig :: WindowConfig
 windowConfig = defaultWindow
-  { windowOpenGL = Just defaultOpenGL
+  { windowGraphicsContext = OpenGLContext defaultOpenGL
   , windowMode = FullscreenDesktop
   }
 
