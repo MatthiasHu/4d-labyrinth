@@ -51,7 +51,7 @@ handleMouseWheel (V2 _ dy) = return . rotationInput
 rotationInput :: (SomeVector v) =>
   RotationInput Scalar -> State v -> State v
 rotationInput input s = s & over eye
-  ((s ^. rotationMethod) input <>)
+  ((s ^. rotationMethod . inputRotation) input <>)
 
 handleWindowSizeChanged :: State v -> IO (State v)
 handleWindowSizeChanged s = do

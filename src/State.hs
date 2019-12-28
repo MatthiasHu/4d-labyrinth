@@ -9,6 +9,7 @@ module State
   , eye
   , rotationMethod
   , lastTick
+  , inactiveFor
   ) where
 
 import Graphics.Rendering.OpenGL (GLfloat)
@@ -32,6 +33,7 @@ data State v = State
   , _eye :: Transformation v Scalar
   , _rotationMethod :: RotationMethod v Scalar
   , _lastTick :: Word32
+  , _inactiveFor :: Int
   }
 
 makeLenses ''State
