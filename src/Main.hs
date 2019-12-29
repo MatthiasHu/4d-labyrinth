@@ -80,12 +80,12 @@ tickPure keydown s = s
        map (uncurry compare . over both keydown) movementKeys)
   & (over inactiveFor (+ 1))
   where
-    speed = 0.10
+    speed = 0.07
 
 rotateIfInactive :: (SomeVector v, R3 v) =>
   State v -> State v
 rotateIfInactive s =
-  if (s ^. inactiveFor >= 100)
+  if (s ^. inactiveFor >= 300)
   then s & over eye (rot <>)
   else s
   where
@@ -107,6 +107,6 @@ render s = do
   glSwapWindow (s ^. window)
 
 totter :: (SomeVector v, Dim v, Floating a) => a -> Transformation v a
-totter t = translation (sin (0.005*t) *^ e1)
+totter t = translation (sin (0.001*t) *^ e1)
   where
     e1 = zero & _w .~ 0.01
