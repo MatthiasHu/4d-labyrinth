@@ -107,6 +107,6 @@ render s = do
   glSwapWindow (s ^. window)
 
 totter :: (SomeVector v, Dim v, Floating a) => a -> Transformation v a
-totter t = translation (sin (0.01*t) *^ e1)
+totter t = translation (sin (0.005*t) *^ e1)
   where
-    e1 = zero & _w .~ 0.02
+    e1 = zero & _w .~ 0.01
