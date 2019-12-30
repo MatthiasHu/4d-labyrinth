@@ -2,6 +2,7 @@
 
 module Worlds.RandomTunnel
   ( randomTunnel
+  , randomCavernousTunnel
   ) where
 
 import Control.Monad.Random
@@ -21,15 +22,33 @@ import Color
 
 randomTunnel :: (SomeVector v, MonadRandom m, SomeScalar a) =>
   Int -> m (SceneTO v a, Transformation v a)
-randomTunnel n = do
+randomTunnel n = randomCavernousTunnel n 0
+
+randomCavernousTunnel :: (SomeVector v, MonadRandom m, SomeScalar a) =>
+  Int -> Float -> m (SceneTO v a, Transformation v a)
+randomCavernousTunnel n cavernousity = do
   path <- randomPath (pure (n-1)) (pure 1)
   let pathSet = Set.fromList path
-  tunnelBox <- randomColorBoxTunnel n (`Set.notMember` pathSet)
+  let allInnerPositions = sequenceA (pure [1..n-1])
+  cavernousSet <- Set.fromList <$> thinOut cavernousity allInnerPositions
+  let isHollow = (`Set.notMember` (pathSet `Set.union` cavernousSet))
+  tunnelBox <- randomColorBoxTunnel n isHollow (pure 1)
   let gem = Transformed
         (translation . pure . fromIntegral $ (n-1))
         (SceneObject $ cubeWithWireframe 0.2 & objectColor .~ white)
       scene = SceneFork [tunnelBox, gem]
   return (scene, translation (pure (-1)))
+
+-- Randomly delete some elements of a list.
+-- (p is the probability of staying in.)
+thinOut :: (MonadRandom m) => Float -> [a] -> m [a]
+thinOut p [] = return []
+thinOut p (x:xs) = do
+  pass <- (p >) <$> getRandom
+  rest <- thinOut p xs
+  if pass
+  then return (x:rest)
+  else return rest
 
 -- A random monotonous path connecting two points.
 randomPath :: forall v m.

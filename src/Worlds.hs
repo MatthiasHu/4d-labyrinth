@@ -2,6 +2,7 @@ module Worlds
   ( randomScene
   , randomScene2
   , randomTunnel
+  , randomCavernousTunnel
   , randomPeaks
   , gridWorld
   , screwWorld

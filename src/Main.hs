@@ -25,10 +25,11 @@ type Dim v = R4 v
 
 main :: IO ()
 main = do
-  let world = randomTunnel 5
+  let world = randomCavernousTunnel 5 0.1
       rotationMethod = rot4dQuaternion
   (window, shaderLocs) <- setup
   (scene, eye) <- world
+  putStrLn $ (show (length (sceneObjects scene)) ++ " objects")
   startTime <- ticks
   mainLoop $
     State window shaderLocs scene eye rotationMethod startTime 0

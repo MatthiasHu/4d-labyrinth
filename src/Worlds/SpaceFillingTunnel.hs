@@ -32,6 +32,7 @@ spaceFillingTunnel iteration =
   where
     scene = randomColorBoxTunnel (2^(iteration+1))
       ((`Set.notMember` pathSet) . toList)
+      (pure 1)
     pathSet :: Set.Set [Int]
     pathSet = Set.fromList path
     path = map (map (+1)) $ stretchedSpaceFillingPath dim iteration
