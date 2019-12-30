@@ -3,6 +3,7 @@ module Worlds
   , randomScene2
   , randomTunnel
   , randomCavernousTunnel
+  , spongeTunnel
   , randomPeaks
   , gridWorld
   , screwWorld
@@ -13,6 +14,7 @@ module Worlds
 
 import Worlds.RandomScene
 import Worlds.RandomTunnel
+import Worlds.Sponge
 import Worlds.RandomPeaks
 import Worlds.Grid
 import Worlds.Screw

@@ -1,6 +1,7 @@
 module Worlds.RandomColorBox
   ( randomColorBox
   , randomColorBoxTunnel
+  , floodHollow
   ) where
 
 import Control.Monad.Random
