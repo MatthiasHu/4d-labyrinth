@@ -1,0 +1,11 @@
+OpenGL
+MonadRandom
+sdl2
+lens
+linear
+containers
+bytestring
+filepath
+adjunctions
+array
+mtl
